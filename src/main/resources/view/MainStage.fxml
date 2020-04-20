@@ -32,7 +32,7 @@
                 </MenuItem>
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Thêm từ Files..." />
-                <MenuItem mnemonicParsing="false" text="Thêm từ Folder..." />
+                <MenuItem mnemonicParsing="false" onAction="#addFolder" text="Thêm từ Folder..." />
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#deleteLibrary" text="Xoá toàn bộ thư viện" />
                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -97,7 +97,7 @@
                         <MenuItem mnemonicParsing="false" text="Sửa Thông tin..." />
                         <MenuItem mnemonicParsing="false" onAction="#deleteSong" text="Xoá Bài hát" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" text="Xem chi tiết..." />
+                        <MenuItem mnemonicParsing="false" onAction="#openDetail" text="Xem chi tiết..." />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" text="Mở đường dẫn..." />
                     </items>

@@ -7,8 +7,10 @@ package main.resources.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -18,17 +20,20 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.java.model.Song;
-import main.java.model.SongManger;
+import main.java.model.Manager;
 import main.java.service.FileService;
-import main.java.service.SongService;
+import main.java.service.ManagerService;
 import org.apache.tika.exception.TikaException;
+import org.jetbrains.annotations.NotNull;
 import org.xml.sax.SAXException;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -45,18 +50,16 @@ public class MainStage implements Initializable {
     public TableColumn<Song, Integer> sampleRateColumn;
 
     private ObservableList<Song> displayList;
-    private SongManger songManager;
     private FileChooser fileChooser = new FileChooser();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //Add Database
         try {
-            songManager = FileService.getInstance().readDB("library.dat");
-            displayList = FXCollections.observableArrayList(songManager.getSongList());
+            Manager.getInstance().setSongList(FileService.getInstance().readDB("library.dat"));
+            displayList = FXCollections.observableArrayList(Manager.getInstance().getSongList());
         } catch (IOException | NullPointerException ex) {
             displayList = FXCollections.observableArrayList();
-            songManager = new SongManger();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -97,7 +100,7 @@ public class MainStage implements Initializable {
             fileChooser.setInitialDirectory(files.get(0).getParentFile());
             importFile(files);
         } catch (NullPointerException e) {
-            System.out.println("Huỷ chọn");
+            e.printStackTrace();
         }
     }
 
@@ -115,16 +118,16 @@ public class MainStage implements Initializable {
                 importFile(Arrays.asList(files));
             }
         } catch (NullPointerException e) {
-            System.out.println("Huỷ chọn!");
+            e.printStackTrace();
         }
     }
 
-    private void importFile(List<File> files) {
+    private void importFile(@NotNull List<File> files) {
         for (File file : files) {
             try {
                 Song song = FileService.getInstance().importSong(file);
                 songTable.getItems().add(song);
-                SongService.getInstance().addToDB(song, songManager);
+                ManagerService.getInstance().addToDB(song);
             } catch (IOException e) {
                 System.out.println("File đã tồn tại");
             } catch (TikaException | SAXException e) {
@@ -136,7 +139,7 @@ public class MainStage implements Initializable {
     public void deleteLibrary() {
         displayList = FXCollections.observableArrayList();
         songTable.setItems(displayList);
-        songManager = new SongManger();
+        Manager.getInstance().setSongList(new LinkedList<>());
     }
 
     public void deleteSong() {
@@ -144,10 +147,39 @@ public class MainStage implements Initializable {
         current = songTable.getItems();
         selected = songTable.getSelectionModel().getSelectedItems();
         current.removeAll(selected);
-        SongService.getInstance().deleteFromDB(selected.get(0),songManager);
+        ManagerService.getInstance().deleteFromDB(selected.get(0));
+    }
+
+    public void openDetail() {
+        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
+        Song selectedSong = selected.get(0);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
+        Stage stage = new Stage();
+
+        try {
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            DetailStage detailStage = loader.getController();
+            detailStage.setSong(selectedSong);
+            detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
+            detailStage.title.setText(selectedSong.getTitle());
+            detailStage.artist.setText(selectedSong.getArtist());
+            detailStage.album.setText(selectedSong.getAlbum());
+            detailStage.creator.setText(selectedSong.getCreator());
+            detailStage.genre.setText(selectedSong.getGenre());
+            detailStage.year.setText(String.valueOf(selectedSong.getYear()));
+            detailStage.duration.setText(selectedSong.getDurationString());
+            detailStage.bitrate.setText(String.valueOf(selectedSong.getBitrate()));
+            detailStage.sampleRate.setText(String.valueOf(selectedSong.getSampleRate()));
+            stage.setScene(scene);
+            stage.showAndWait();
+            songTable.refresh();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void exit() throws IOException {
-        FileService.getInstance().saveDB(songManager, new File("library.dat"));
+        FileService.getInstance().saveDB(new File("library.dat"));
     }
 }

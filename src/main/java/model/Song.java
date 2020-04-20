@@ -15,26 +15,19 @@ public class Song implements Serializable {
     private String album;
     private String genre;
     private String creator;
-    private Integer trackNumber;
+    private int trackNumber;
+    private int year;
     private int sampleRate;
 
     public Song() {
     }
 
-    public Song(String title, String artist, String album, String genre) {
+    public Song(String title, String artist, String album, String genre, int year) {
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.genre = genre;
-    }
-
-    public Song(String title, int bitrate, Duration duration, String artist, String album, String genre) {
-        this.title = title;
-        this.bitrate = bitrate;
-        this.duration = duration;
-        this.artist = artist;
-        this.album = album;
-        this.genre = genre;
+        this.year = year;
     }
 
     public String getTitle() {
@@ -107,6 +100,18 @@ public class Song implements Serializable {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getDurationString() {
+        return duration.toMinutes() + ":" + duration.minusMinutes(duration.toMinutes()).getSeconds();
     }
 
     @Override
