@@ -41,6 +41,7 @@ public class ValidateInput extends Application {
 
         //UserName input
         TextField userInput = new TextField();
+        userInput.setText("ABCDEF");
         userInput.setPromptText("username");
         GridPane.setConstraints(userInput,2,2);
 

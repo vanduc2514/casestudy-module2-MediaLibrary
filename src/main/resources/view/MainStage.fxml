@@ -22,106 +22,116 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="739.0" prefWidth="1244.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.controllers.MainStage">
-   <top>
-       <MenuBar BorderPane.alignment="CENTER">
-           <Menu mnemonicParsing="false" text="File">
-               <MenuItem mnemonicParsing="false" text="Tạo thư viện mới">
-                   <accelerator>
-                       <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                   </accelerator>
-               </MenuItem>
-               <SeparatorMenuItem mnemonicParsing="false" />
-               <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Thêm bằng file..." />
-               <MenuItem mnemonicParsing="false" text="Thêm bằng folder..." />
-               <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Xoá toàn bộ thư viện" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-               <MenuItem mnemonicParsing="false" text="Đóng ứng dụng" />
-           </Menu>
-           <Menu mnemonicParsing="false" text="Sửa">
-               <MenuItem mnemonicParsing="false" text="Sửa thông tin..." />
-               <MenuItem mnemonicParsing="false" text="Xoá" />
-           </Menu>
-           <Menu mnemonicParsing="false" text="Xem">
-               <MenuItem mnemonicParsing="false" text="Xem theo tên bài hát" />
-               <MenuItem mnemonicParsing="false" text="Xem theo tên ca sỹ" />
-               <MenuItem mnemonicParsing="false" text="Xem theo ca sỹ" />
-               <MenuItem mnemonicParsing="false" text="Xem theo Album" />
-               <MenuItem mnemonicParsing="false" text="Xem theo thể loại" />
-               <SeparatorMenuItem mnemonicParsing="false" />
-               <Menu mnemonicParsing="false" text="Sắp xếp">
-                   <RadioMenuItem mnemonicParsing="false" selected="true" text="Sắp xếp theo tên bài hát">
-                       <toggleGroup>
-                           <ToggleGroup fx:id="sortBy" />
-                       </toggleGroup>
-                   </RadioMenuItem>
-                   <RadioMenuItem mnemonicParsing="false" text="Sắp xếp theo tên album" toggleGroup="$sortBy" />
-                   <RadioMenuItem mnemonicParsing="false" text="Sắp xếp theo tên ca sỹ" toggleGroup="$sortBy" />
-                   <RadioMenuItem mnemonicParsing="false" text="Sắp xếp theo thể loại" toggleGroup="$sortBy" />
-                   <SeparatorMenuItem mnemonicParsing="false" />
-                   <RadioMenuItem mnemonicParsing="false" selected="true" text="Giảm dần">
-                       <toggleGroup>
-                           <ToggleGroup fx:id="order" />
-                       </toggleGroup>
-                   </RadioMenuItem>
-                   <RadioMenuItem mnemonicParsing="false" text="Tăng dần" toggleGroup="$order" />
-               </Menu>
-               <SeparatorMenuItem mnemonicParsing="false" />
-               <MenuItem mnemonicParsing="false" text="Xem chi tiết bài hát" />
-               <SeparatorMenuItem mnemonicParsing="false" />
-               <MenuItem mnemonicParsing="false" text="Ẩn cột trái" />
-           </Menu>
-       </MenuBar>
-   </top>
-   <center>
-      <TableView fx:id="songTable" prefHeight="611.0" prefWidth="693.0" BorderPane.alignment="CENTER">
-        <columns>
-            <TableColumn prefWidth="43.0" text="No" />
-          <TableColumn fx:id="titleColumn" editable="false" minWidth="270.0" prefWidth="270.0" text="Tựa đề" />
-          <TableColumn fx:id="artistColumn" minWidth="0.0" prefWidth="120.0" text="Ca sỹ" />
-          <TableColumn fx:id="albumColumn" prefWidth="200.0" text="Album" />
-            <TableColumn prefWidth="120.0" text="Sáng tác" />
-          <TableColumn fx:id="genreColumn" prefWidth="115.0" text="Thể loại" />
-            <TableColumn fx:id="durationColumn" prefWidth="76.0" text="Độ dài" />
-            <TableColumn prefWidth="93.0" text="Sample Rate" />
-        </columns>
-         <contextMenu>
-            <ContextMenu>
-              <items>
-                <MenuItem mnemonicParsing="false" text="Thêm" />
-                  <MenuItem mnemonicParsing="false" text="Sửa" />
-                  <MenuItem mnemonicParsing="false" text="Xoá" />
+    <top>
+        <MenuBar BorderPane.alignment="CENTER">
+            <Menu mnemonicParsing="false" text="File">
+                <MenuItem mnemonicParsing="false" text="Tạo thư viện mới">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                    </accelerator>
+                </MenuItem>
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Thêm từ Files..." />
+                <MenuItem mnemonicParsing="false" text="Thêm từ Folder..." />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#deleteLibrary" text="Xoá toàn bộ thư viện" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" text="Đóng ứng dụng" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Sửa">
+                <MenuItem mnemonicParsing="false" text="Sửa thông tin..." />
+                <MenuItem mnemonicParsing="false" onAction="#deleteSong" text="Xoá" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Xem">
+                <MenuItem mnemonicParsing="false" text="Xem theo tên bài hát" />
+                <MenuItem mnemonicParsing="false" text="Xem theo tên ca sỹ" />
+                <MenuItem mnemonicParsing="false" text="Xem theo ca sỹ" />
+                <MenuItem mnemonicParsing="false" text="Xem theo Album" />
+                <MenuItem mnemonicParsing="false" text="Xem theo thể loại" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <Menu mnemonicParsing="false" text="Sắp xếp">
+                    <RadioMenuItem mnemonicParsing="false" selected="true" text="Sắp xếp theo tên bài hát">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="sortBy" />
+                        </toggleGroup>
+                    </RadioMenuItem>
+                    <RadioMenuItem mnemonicParsing="false" text="Sắp xếp theo tên album" toggleGroup="$sortBy" />
+                    <RadioMenuItem mnemonicParsing="false" text="Sắp xếp theo tên ca sỹ" toggleGroup="$sortBy" />
+                    <RadioMenuItem mnemonicParsing="false" text="Sắp xếp theo thể loại" toggleGroup="$sortBy" />
+                    <SeparatorMenuItem mnemonicParsing="false" />
+                    <RadioMenuItem mnemonicParsing="false" selected="true" text="Giảm dần">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="order" />
+                        </toggleGroup>
+                    </RadioMenuItem>
+                    <RadioMenuItem mnemonicParsing="false" text="Tăng dần" toggleGroup="$order" />
+                </Menu>
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" text="Xem chi tiết bài hát" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" text="Ẩn cột trái" />
+            </Menu>
+        </MenuBar>
+    </top>
+    <center>
+        <TableView fx:id="songTable" prefHeight="611.0" prefWidth="693.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="trackColumn" prefWidth="60.0" text="Track" />
+                <TableColumn fx:id="titleColumn" editable="false" minWidth="270.0" prefWidth="415.0" text="Tựa đề" />
+                <TableColumn fx:id="artistColumn" minWidth="0.0" prefWidth="18.0" text="Ca sỹ" />
+                <TableColumn fx:id="albumColumn" prefWidth="200.0" text="Album" />
+                <TableColumn fx:id="creatorColumn" prefWidth="120.0" text="Sáng tác" />
+                <TableColumn fx:id="genreColumn" prefWidth="115.0" text="Thể loại" />
+                <TableColumn fx:id="durationColumn" prefWidth="76.0" text="Độ dài" />
+                <TableColumn fx:id="sampleRateColumn" prefWidth="174.0" text="Sample Rate" />
+            </columns>
+            <contextMenu>
+                <ContextMenu>
+                    <items>
+                  <Menu mnemonicParsing="false" text="Thêm">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Thêm từ Files..." />
+                        <MenuItem mnemonicParsing="false" onAction="#addFolder" text="Thêm từ Folder..." />
+                    </items>
+                  </Menu>
+                        <MenuItem mnemonicParsing="false" text="Sửa Thông tin..." />
+                        <MenuItem mnemonicParsing="false" onAction="#deleteSong" text="Xoá Bài hát" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Xem chi tiết..." />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Xem chi tiết" />
-              </items>
-            </ContextMenu>
-         </contextMenu>
-      </TableView>
-   </center>
-   <left>
-       <VBox prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-           <effect>
-               <Glow />
-           </effect>
-           <TilePane />
-           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Bái hát" />
-           <Separator prefWidth="200.0" />
-           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
-           <Separator prefWidth="200.0" />
-           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Album" />
-           <Separator prefWidth="200.0" />
-           <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
-           <Pane prefHeight="406.0" prefWidth="200.0">
-               <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                   <viewport>
-                       <Rectangle2D height="200.0" width="200.0" />
-                   </viewport>
-               </ImageView>
-               <Label layoutX="83.0" layoutY="228.0" text="Label" />
-               <Label layoutX="83.0" layoutY="263.0" text="Label" />
-               <Label layoutX="83.0" layoutY="304.0" text="Label" />
-               <Label layoutX="83.0" layoutY="343.0" text="Label" />
-           </Pane>
-       </VBox>
-   </left>
+                  <MenuItem mnemonicParsing="false" text="Mở đường dẫn..." />
+                    </items>
+                </ContextMenu>
+            </contextMenu>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+        </TableView>
+    </center>
+    <left>
+        <VBox prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <effect>
+                <Glow />
+            </effect>
+            <TilePane />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Bái hát" />
+            <Separator prefWidth="200.0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
+            <Separator prefWidth="200.0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Album" />
+            <Separator prefWidth="200.0" />
+            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
+            <Pane prefHeight="406.0" prefWidth="200.0">
+                <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                    <viewport>
+                        <Rectangle2D height="200.0" width="200.0" />
+                    </viewport>
+                </ImageView>
+                <Label layoutX="83.0" layoutY="228.0" text="Label" />
+                <Label layoutX="83.0" layoutY="263.0" text="Label" />
+                <Label layoutX="83.0" layoutY="304.0" text="Label" />
+                <Label layoutX="83.0" layoutY="343.0" text="Label" />
+            </Pane>
+        </VBox>
+    </left>
 </BorderPane>

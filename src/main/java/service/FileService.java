@@ -9,7 +9,6 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
-import org.apache.tika.parser.mp3.AudioFrame;
 import org.apache.tika.parser.mp3.Mp3Parser;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -34,7 +33,6 @@ public class FileService {
 
     public Song importSong(File file) throws TikaException, IOException, SAXException {
         readSong(file);
-        System.out.println(metadata.toString());
         String title = metadata.get("title");
         String artist = metadata.get("xmpDM:artist");
         String album = metadata.get("xmpDM:album");

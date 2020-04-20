@@ -15,7 +15,7 @@ public class Song implements Serializable {
     private String album;
     private String genre;
     private String creator;
-    private int trackNumber;
+    private Integer trackNumber;
     private int sampleRate;
 
     public Song() {
