@@ -174,11 +174,10 @@ public class MainStage implements Initializable {
 
     @FXML
     public void handleContextMenuTable(ContextMenuEvent contextMenuEvent) {
-        if (displayList.size() == 0) {
+        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
+        if (selected.isEmpty()) {
             songTable.getContextMenu().hide();
         }
-        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
-        System.out.println(selected);
     }
 
     @FXML
@@ -240,18 +239,5 @@ public class MainStage implements Initializable {
         sampleRateColumn.setCellValueFactory(new PropertyValueFactory<>("sampleRate"));
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
         songTable.setItems(displayList);
-        songTable.setRowFactory(new Callback<TableView<Song>, TableRow<Song>>() {
-            @Override
-            public TableRow<Song> call(TableView<Song> param) {
-                final TableRow<Song> row = new TableRow<>();
-                final ContextMenu contextMenu = new ContextMenu();
-                row.contextMenuProperty().bind(
-                        Bindings.when(row.selectedProperty())
-                                .then((ContextMenu) null)
-                                .otherwise(contextMenu)
-                );
-                return row;
-            }
-        });
     }
 }
