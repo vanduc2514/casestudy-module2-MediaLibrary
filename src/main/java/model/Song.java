@@ -8,46 +8,19 @@ import java.time.Duration;
 import java.time.LocalTime;
 
 public class Song implements Serializable {
+    private int trackNumber;
     private String title;
-    private int bitrate;
-    private Duration duration;
     private String artist;
     private String album;
     private String genre;
     private String creator;
-    private int trackNumber;
     private int year;
+    private Duration duration;
+    private int bitrate;
     private int sampleRate;
+    private byte[] albumArt;
 
     public Song() {
-    }
-
-    public Song(String title, String artist, String album, String genre, int year) {
-        this.title = title;
-        this.artist = artist;
-        this.album = album;
-        this.genre = genre;
-        this.year = year;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public int getSampleRate() {
-        return sampleRate;
-    }
-
-    public void setSampleRate(int sampleRate) {
-        this.sampleRate = sampleRate;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
     }
 
     public int getTrackNumber() {
@@ -58,24 +31,12 @@ public class Song implements Serializable {
         this.trackNumber = trackNumber;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getBitrate() {
-        return bitrate;
-    }
-
-    public void setBitrate(int bitrate) {
-        this.bitrate = bitrate;
-    }
-
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
     }
 
     public String getArtist() {
@@ -102,6 +63,14 @@ public class Song implements Serializable {
         this.genre = genre;
     }
 
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setComposer(String creator) {
+        this.creator = creator;
+    }
+
     public int getYear() {
         return year;
     }
@@ -110,8 +79,40 @@ public class Song implements Serializable {
         this.year = year;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public int getBitrate() {
+        return bitrate;
+    }
+
+    public void setBitrate(int bitrate) {
+        this.bitrate = bitrate;
+    }
+
+    public int getSampleRate() {
+        return sampleRate;
+    }
+
+    public void setSampleRate(int sampleRate) {
+        this.sampleRate = sampleRate;
+    }
+
     public String getDurationString() {
         return duration.toMinutes() + ":" + duration.minusMinutes(duration.toMinutes()).getSeconds();
+    }
+
+    public byte[] getAlbumArt() {
+        return albumArt;
+    }
+
+    public void setAlbumArt(byte[] albumArt) {
+        this.albumArt = albumArt;
     }
 
     @Override

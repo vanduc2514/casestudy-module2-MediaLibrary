@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import main.java.model.Song;
-import main.java.service.ManagerService;
 
 public class DetailStage {
     public TextField track;
@@ -32,12 +31,7 @@ public class DetailStage {
     }
 
     public void updateSong(ActionEvent actionEvent) {
-        ManagerService.getInstance().updateSong(song
-                , Integer.parseInt(track.getText())
-                , title.getText()
-                , artist.getText()
-                , album.getText()
-                , genre.getText());
+
         closeStage(actionEvent);
     }
 }

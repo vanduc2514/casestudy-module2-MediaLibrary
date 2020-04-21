@@ -36,10 +36,10 @@
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#deleteLibrary" text="Xoá toàn bộ thư viện" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" text="Đóng ứng dụng" />
+                <MenuItem mnemonicParsing="false" onAction="#exit" text="Đóng ứng dụng" />
             </Menu>
             <Menu mnemonicParsing="false" text="Sửa">
-                <MenuItem mnemonicParsing="false" text="Sửa thông tin..." />
+                <MenuItem mnemonicParsing="false" onAction="#openDetail" text="Sửa thông tin..." />
                 <MenuItem mnemonicParsing="false" onAction="#deleteSong" text="Xoá" />
             </Menu>
             <Menu mnemonicParsing="false" text="Xem">
