@@ -4,6 +4,7 @@ package main.java.service;/*
  */
 
 import main.java.model.Song;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ public class LinkedListManager implements SongManager {
     private List<Song> songList;
     private static LinkedListManager manager;
 
-    private LinkedListManager(){}
+    private LinkedListManager() {
+    }
 
     public static LinkedListManager getInstance() {
         if (manager == null) {
@@ -39,5 +41,10 @@ public class LinkedListManager implements SongManager {
     @Override
     public void setSongList(List<Song> list) {
         this.songList = list;
+    }
+
+    @Override
+    public Song getLastAdd() {
+        return songList.get(songList.size() - 1);
     }
 }

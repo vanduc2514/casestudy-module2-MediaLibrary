@@ -94,12 +94,12 @@
                         <MenuItem mnemonicParsing="false" onAction="#addFolder" text="Thêm từ Folder..." />
                     </items>
                   </Menu>
-                        <MenuItem mnemonicParsing="false" text="Sửa Thông tin..." />
+                        <MenuItem mnemonicParsing="false" onAction="#openDetail" text="Sửa Thông tin..." />
                         <MenuItem mnemonicParsing="false" onAction="#deleteSong" text="Xoá Bài hát" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openDetail" text="Xem chi tiết..." />
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Mở đường dẫn..." />
+                  <MenuItem mnemonicParsing="false" onAction="#openLocation" text="Mở đường dẫn..." />
                     </items>
                 </ContextMenu>
             </contextMenu>

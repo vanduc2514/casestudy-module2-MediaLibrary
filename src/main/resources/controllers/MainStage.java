@@ -8,6 +8,7 @@ import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,6 +23,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import libs.mp3agic.InvalidDataException;
+import libs.mp3agic.NotSupportedException;
 import libs.mp3agic.UnsupportedTagException;
 import main.java.model.Song;
 import main.java.service.FileService;
@@ -29,10 +31,13 @@ import main.java.service.Mp3Handler;
 import main.java.service.LinkedListManager;
 import main.java.service.SongManager;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -133,6 +138,7 @@ public class MainStage implements Initializable {
         Song selectedSong = selected.get(0);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
         Stage stage = new Stage();
+        String path = selectedSong.getPath();
         try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
@@ -140,10 +146,27 @@ public class MainStage implements Initializable {
             setSongDetail(selectedSong, detailStage);
             stage.setScene(scene);
             stage.showAndWait();
+            if (detailStage.isFieldEdited) {
+                try {
+                    deleteSong();
+                    mp3Handler.setMedata(new File(path), detailStage.propertyMap);
+                    mp3Handler.importSong(new File(path), songManager);
+                    displayList.add(songManager.getLastAdd());
+                } catch (InvalidDataException | IOException | UnsupportedTagException | NotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
             songTable.refresh();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void openLocation(ActionEvent actionEvent) throws IOException {
+        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
+        Desktop desktop = Desktop.getDesktop();
+        desktop.open(new File(selected.get(0).getPath()).getParentFile());
     }
 
     @FXML
@@ -153,12 +176,11 @@ public class MainStage implements Initializable {
     }
 
     private void setSongDetail(Song selectedSong, DetailStage detailStage) {
-        detailStage.setSong(selectedSong);
         detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
         detailStage.title.setText(selectedSong.getTitle());
         detailStage.artist.setText(selectedSong.getArtist());
         detailStage.album.setText(selectedSong.getAlbum());
-        detailStage.creator.setText(selectedSong.getCreator());
+        detailStage.composer.setText(selectedSong.getCreator());
         detailStage.genre.setText(selectedSong.getGenre());
         detailStage.year.setText(String.valueOf(selectedSong.getYear()));
         detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());

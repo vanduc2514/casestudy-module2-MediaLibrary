@@ -16,4 +16,6 @@ public interface SongManager {
     List<Song> getSongList();
 
     void setSongList(List<Song> list);
+
+    Song getLastAdd();
 }

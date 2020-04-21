@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.Duration;
 
 public class Song implements Serializable {
-    private int trackNumber;
+    private String trackNumber;
     private String title;
     private String artist;
     private String album;
@@ -23,11 +23,11 @@ public class Song implements Serializable {
     public Song() {
     }
 
-    public int getTrackNumber() {
+    public String getTrackNumber() {
         return trackNumber;
     }
 
-    public void setTrackNumber(int trackNumber) {
+    public void setTrackNumber(String trackNumber) {
         this.trackNumber = trackNumber;
     }
 

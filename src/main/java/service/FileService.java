@@ -4,11 +4,13 @@ package main.java.service;/*
  */
 
 import libs.mp3agic.InvalidDataException;
+import libs.mp3agic.NotSupportedException;
 import libs.mp3agic.UnsupportedTagException;
 import main.java.model.Song;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 public interface FileService {
@@ -17,5 +19,7 @@ public interface FileService {
     void saveList(File file, SongManager songManager) throws IOException;
 
     void readList(File file, SongManager songManager) throws IOException, ClassNotFoundException;
+
+    void setMedata(File file, HashMap<String, String> hashMap) throws InvalidDataException, IOException, UnsupportedTagException, NotSupportedException;
 
 }
