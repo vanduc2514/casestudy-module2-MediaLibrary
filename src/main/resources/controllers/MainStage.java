@@ -24,6 +24,7 @@ import javafx.util.Callback;
 import libs.mp3agic.InvalidDataException;
 import libs.mp3agic.UnsupportedTagException;
 import main.java.model.Song;
+import main.java.service.FileService;
 import main.java.service.Mp3Handler;
 import main.java.service.LinkedListManager;
 import main.java.service.SongManager;
@@ -41,7 +42,7 @@ import java.util.ResourceBundle;
 public class MainStage implements Initializable {
     private ObservableList<Song> displayList;
     private FileChooser fileChooser = new FileChooser();
-    private Mp3Handler mp3Handler;
+    private FileService mp3Handler;
     private SongManager songManager;
 
     @FXML
@@ -132,22 +133,11 @@ public class MainStage implements Initializable {
         Song selectedSong = selected.get(0);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
         Stage stage = new Stage();
-
         try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             DetailStage detailStage = loader.getController();
-            detailStage.setSong(selectedSong);
-            detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
-            detailStage.title.setText(selectedSong.getTitle());
-            detailStage.artist.setText(selectedSong.getArtist());
-            detailStage.album.setText(selectedSong.getAlbum());
-            detailStage.creator.setText(selectedSong.getCreator());
-            detailStage.genre.setText(selectedSong.getGenre());
-            detailStage.year.setText(String.valueOf(selectedSong.getYear()));
-            detailStage.duration.setText(selectedSong.getDurationString());
-            detailStage.bitrate.setText(selectedSong.getBitrate() + "kbps");
-            detailStage.sampleRate.setText(selectedSong.getSampleRate() + "Khz");
+            setSongDetail(selectedSong, detailStage);
             stage.setScene(scene);
             stage.showAndWait();
             songTable.refresh();
@@ -160,6 +150,20 @@ public class MainStage implements Initializable {
     public void exit() throws IOException {
         mp3Handler.saveList(new File("library.dat"), songManager);
         Platform.exit();
+    }
+
+    private void setSongDetail(Song selectedSong, DetailStage detailStage) {
+        detailStage.setSong(selectedSong);
+        detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
+        detailStage.title.setText(selectedSong.getTitle());
+        detailStage.artist.setText(selectedSong.getArtist());
+        detailStage.album.setText(selectedSong.getAlbum());
+        detailStage.creator.setText(selectedSong.getCreator());
+        detailStage.genre.setText(selectedSong.getGenre());
+        detailStage.year.setText(String.valueOf(selectedSong.getYear()));
+        detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
+        detailStage.bitrate.setText(selectedSong.getBitrate() + "kbps");
+        detailStage.sampleRate.setText(selectedSong.getSampleRate() + "Khz");
     }
 
     private void importFile(@NotNull List<File> files) {

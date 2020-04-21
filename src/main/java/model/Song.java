@@ -5,7 +5,6 @@ package main.java.model;/*
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.time.LocalTime;
 
 public class Song implements Serializable {
     private int trackNumber;
@@ -19,6 +18,7 @@ public class Song implements Serializable {
     private int bitrate;
     private int sampleRate;
     private byte[] albumArt;
+    private String path;
 
     public Song() {
     }
@@ -103,16 +103,34 @@ public class Song implements Serializable {
         this.sampleRate = sampleRate;
     }
 
-    public String getDurationString() {
-        return duration.toMinutes() + ":" + duration.minusMinutes(duration.toMinutes()).getSeconds();
-    }
-
     public byte[] getAlbumArt() {
         return albumArt;
     }
 
     public void setAlbumArt(byte[] albumArt) {
         this.albumArt = albumArt;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(getClass() != obj.getClass()) {
+            return false;
+        }
+        Song song = (Song) obj;
+        if (this.title.equals(song.getTitle())) {
+            if (this.artist.equals(song.getArtist())) {
+                return this.album.equals(song.getAlbum());
+            }
+        }
+        return false;
     }
 
     @Override

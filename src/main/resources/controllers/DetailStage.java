@@ -31,7 +31,11 @@ public class DetailStage {
     }
 
     public void updateSong(ActionEvent actionEvent) {
-
+        song.setTrackNumber(Integer.parseInt(track.getText()));
+        song.setTitle(title.getText());
+        song.setAlbum(album.getText());
+        song.setArtist(artist.getText());
+        song.setGenre(genre.getText());
         closeStage(actionEvent);
     }
 }

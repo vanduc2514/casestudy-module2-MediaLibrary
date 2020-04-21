@@ -14,7 +14,9 @@ public class Mp3Handler implements FileService {
     @Override
     public void importSong(File file, SongManager songManager) throws InvalidDataException, IOException, UnsupportedTagException {
         Song song = parseSong(file);
-        songManager.addToList(song);
+        if (!songManager.getSongList().contains(song)) {
+            songManager.addToList(song);
+        }
     }
 
     @Override
@@ -52,6 +54,7 @@ public class Mp3Handler implements FileService {
         song.setBitrate(mp3File.getBitrate());
         song.setSampleRate(mp3File.getSampleRate());
         song.setAlbumArt(id3v2Tag.getAlbumImage());
+        song.setPath(file.getAbsolutePath());
         return song;
     }
 }
