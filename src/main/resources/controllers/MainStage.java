@@ -6,18 +6,19 @@ package main.resources.controllers;
 
 import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -50,6 +51,8 @@ public class MainStage implements Initializable {
     private FileService mp3Handler;
     private SongManager songManager;
 
+    @FXML
+    public ContextMenu contextTable;
     @FXML
     public TableView<Song> songTable;
     @FXML
@@ -170,6 +173,15 @@ public class MainStage implements Initializable {
     }
 
     @FXML
+    public void handleContextMenuTable(ContextMenuEvent contextMenuEvent) {
+        if (displayList.size() == 0) {
+            songTable.getContextMenu().hide();
+        }
+        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
+        System.out.println(selected);
+    }
+
+    @FXML
     public void exit() throws IOException {
         mp3Handler.saveList(new File("library.dat"), songManager);
         Platform.exit();
@@ -228,5 +240,18 @@ public class MainStage implements Initializable {
         sampleRateColumn.setCellValueFactory(new PropertyValueFactory<>("sampleRate"));
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
         songTable.setItems(displayList);
+        songTable.setRowFactory(new Callback<TableView<Song>, TableRow<Song>>() {
+            @Override
+            public TableRow<Song> call(TableView<Song> param) {
+                final TableRow<Song> row = new TableRow<>();
+                final ContextMenu contextMenu = new ContextMenu();
+                row.contextMenuProperty().bind(
+                        Bindings.when(row.selectedProperty())
+                                .then((ContextMenu) null)
+                                .otherwise(contextMenu)
+                );
+                return row;
+            }
+        });
     }
 }

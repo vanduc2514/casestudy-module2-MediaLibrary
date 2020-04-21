@@ -74,7 +74,7 @@
         </MenuBar>
     </top>
     <center>
-        <TableView fx:id="songTable" prefHeight="611.0" prefWidth="693.0" BorderPane.alignment="CENTER">
+        <TableView fx:id="songTable" onContextMenuRequested="#handleContextMenuTable" prefHeight="611.0" prefWidth="693.0" BorderPane.alignment="CENTER">
             <columns>
                 <TableColumn fx:id="trackColumn" prefWidth="60.0" text="Track" />
                 <TableColumn fx:id="titleColumn" editable="false" minWidth="270.0" prefWidth="415.0" text="Tựa đề" />
@@ -86,7 +86,7 @@
                 <TableColumn fx:id="sampleRateColumn" prefWidth="174.0" text="Sample Rate" />
             </columns>
             <contextMenu>
-                <ContextMenu>
+                <ContextMenu fx:id="contextTable">
                     <items>
                   <Menu mnemonicParsing="false" text="Thêm">
                     <items>
