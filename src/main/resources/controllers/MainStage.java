@@ -4,13 +4,10 @@ package main.resources.controllers;
  * @author Duc on 4/18/2020
  */
 
-import com.sun.istack.internal.NotNull;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,33 +20,24 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import libs.mp3agic.InvalidDataException;
-import libs.mp3agic.NotSupportedException;
-import libs.mp3agic.UnsupportedTagException;
 import main.java.model.Song;
-import main.java.service.FileService;
-import main.java.service.Mp3Handler;
-import main.java.service.LinkedListManager;
-import main.java.service.SongManager;
-
+import main.java.service.facade.ManagerFacade;
+import main.java.service.facade.MyManager;
 import java.awt.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainStage implements Initializable {
     private ObservableList<Song> displayList;
     private FileChooser fileChooser = new FileChooser();
-    private FileService mp3Handler;
-    private SongManager songManager;
+    ManagerFacade manager;
+    List<Song> toDisplay;
 
     @FXML
     public ContextMenu contextTable;
@@ -74,16 +62,13 @@ public class MainStage implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        mp3Handler = new Mp3Handler();
-        songManager = LinkedListManager.getInstance();
+        manager = MyManager.getInstance();
         try {
-            mp3Handler.readList(new File("library.dat"), songManager);
-            displayList = FXCollections.observableArrayList(songManager.getSongList());
-        } catch (IOException | NullPointerException ex) {
-            displayList = FXCollections.observableArrayList();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            toDisplay = manager.loadDisplayList("library.dat");
+        } catch (NullPointerException ex) {
+            toDisplay = manager.createNewList();
         }
+        displayList = FXCollections.observableArrayList(toDisplay);
         configTable();
     }
 
@@ -94,10 +79,12 @@ public class MainStage implements Initializable {
         try {
             List<File> files = fileChooser.showOpenMultipleDialog(new Stage());
             fileChooser.setInitialDirectory(files.get(0).getParentFile());
-            importFile(files);
+            manager.importFile(files);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+        displayList = FXCollections.observableArrayList(manager.getDisplayList());
+        songTable.setItems(displayList);
     }
 
     @FXML
@@ -112,27 +99,29 @@ public class MainStage implements Initializable {
                 }
             });
             if (files != null) {
-                importFile(Arrays.asList(files));
+                manager.importFile(Arrays.asList(files));
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+        displayList = FXCollections.observableArrayList(manager.getDisplayList());
+        songTable.setItems(displayList);
     }
 
     @FXML
     public void deleteLibrary() {
-        displayList = FXCollections.observableArrayList();
+        toDisplay = manager.createNewList();
+        displayList = FXCollections.observableArrayList(toDisplay);
         songTable.setItems(displayList);
-        songManager.setSongList(new LinkedList<>());
     }
 
     @FXML
-    public void deleteSong() {
+    public void removeSong() {
         ObservableList<Song> current, selected;
         current = songTable.getItems();
         selected = songTable.getSelectionModel().getSelectedItems();
         current.removeAll(selected);
-        songManager.removeFromList(selected.get(0));
+        manager.removeSong(selected.get(0));
     }
 
     @FXML
@@ -141,7 +130,6 @@ public class MainStage implements Initializable {
         Song selectedSong = selected.get(0);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
         Stage stage = new Stage();
-        String path = selectedSong.getPath();
         try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
@@ -150,14 +138,10 @@ public class MainStage implements Initializable {
             stage.setScene(scene);
             stage.showAndWait();
             if (detailStage.isFieldEdited) {
-                try {
-                    deleteSong();
-                    mp3Handler.setMedata(new File(path), detailStage.propertyMap);
-                    mp3Handler.importSong(new File(path), songManager);
-                    displayList.add(songManager.getLastAdd());
-                } catch (InvalidDataException | IOException | UnsupportedTagException | NotSupportedException e) {
-                    e.printStackTrace();
-                }
+                removeSong();
+                Song song = manager.editInfo(selectedSong,detailStage.propertyMap);
+                displayList.add(song);
+                songTable.sort();
             }
             songTable.refresh();
         } catch (IOException e) {
@@ -169,11 +153,11 @@ public class MainStage implements Initializable {
     public void openLocation(ActionEvent actionEvent) throws IOException {
         ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
         Desktop desktop = Desktop.getDesktop();
-        desktop.open(new File(selected.get(0).getPath()).getParentFile());
+        desktop.open(manager.getSongFolder(selected.get(0)));
     }
 
     @FXML
-    public void handleContextMenuTable(ContextMenuEvent contextMenuEvent) {
+    public void handleContextMenuTableView(ContextMenuEvent contextMenuEvent) {
         ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
         if (selected.isEmpty()) {
             songTable.getContextMenu().hide();
@@ -182,7 +166,7 @@ public class MainStage implements Initializable {
 
     @FXML
     public void exit() throws IOException {
-        mp3Handler.saveList(new File("library.dat"), songManager);
+        manager.saveLibrary("library.dat");
         Platform.exit();
     }
 
@@ -197,20 +181,6 @@ public class MainStage implements Initializable {
         detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
         detailStage.bitrate.setText(selectedSong.getBitrate() + "kbps");
         detailStage.sampleRate.setText(selectedSong.getSampleRate() + "Khz");
-    }
-
-    private void importFile(@NotNull List<File> files) {
-        for (File file : files) {
-            try {
-                mp3Handler.importSong(file, songManager);
-            } catch (IOException e) {
-                System.out.println("File đã tồn tại");
-            } catch (InvalidDataException | UnsupportedTagException e) {
-                e.printStackTrace();
-            }
-        }
-        displayList = FXCollections.observableArrayList(songManager.getSongList());
-        songTable.setItems(displayList);
     }
 
     private void configTable() {
