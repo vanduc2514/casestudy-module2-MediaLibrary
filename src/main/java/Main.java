@@ -31,11 +31,7 @@ public class Main extends Application {
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
-                    try {
-                        controller.exit();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    controller.exit();
                 }
             });
         } catch (IOException e) {

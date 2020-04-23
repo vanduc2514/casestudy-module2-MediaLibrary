@@ -11,20 +11,23 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.java.model.Song;
-import main.java.service.facade.FacadeManager;
-import main.java.service.facade.MyFacadeManager;
+import main.java.service.facade.FacadeUtil;
+import main.java.service.facade.LibraryUtil;
 import main.resources.controllers.sorter.Sorter;
 import main.resources.controllers.sorter.SorterUseComparator;
 
@@ -42,7 +45,7 @@ public class MainStage implements Initializable {
 
     private ObservableList<Song> displayList;
     private List<Song> toDisplay;
-    private FacadeManager facadeManager;
+    private FacadeUtil facadeUtil;
     private Sorter sorter;
     private FileChooser fileChooser = new FileChooser();
     public Stage stage;
@@ -81,6 +84,8 @@ public class MainStage implements Initializable {
     @FXML
     public Label albumLabel;
     @FXML
+    public Label genreLabel;
+    @FXML
     public ImageView albumArt;
     @FXML
     public Label libraryName;
@@ -107,11 +112,11 @@ public class MainStage implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        facadeManager = MyFacadeManager.getInstance();
+        facadeUtil = LibraryUtil.getInstance();
         try {
-            toDisplay = facadeManager.loadDisplayList("library.dat");
+            toDisplay = facadeUtil.loadDisplayList("library.dat");
         } catch (NullPointerException ex) {
-            toDisplay = facadeManager.createNewList();
+            toDisplay = facadeUtil.createNewList();
         } finally {
             displayList = FXCollections.observableList(toDisplay);
             configTable();
@@ -131,11 +136,19 @@ public class MainStage implements Initializable {
             stage.setScene(scene);
             stage.showAndWait();
             if (messageStage.isOkButtonPressed) {
-                libraryName.setText("Đây là thư viện của " + messageStage.userInput.getText());
+                libraryName.setText(libraryName.getText().replace("Admin", messageStage.userInput.getText()));
             }
+            deleteLibrary();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void deleteLibrary() {
+        toDisplay = facadeUtil.createNewList();
+        displayList = FXCollections.observableList(toDisplay);
+        songTable.setItems(displayList);
     }
 
     @FXML
@@ -145,7 +158,7 @@ public class MainStage implements Initializable {
         try {
             List<File> files = fileChooser.showOpenMultipleDialog(new Stage());
             fileChooser.setInitialDirectory(files.get(0).getParentFile());
-            facadeManager.importFiles(files);
+            facadeUtil.importFiles(files);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -171,7 +184,7 @@ public class MainStage implements Initializable {
                 }
             });
             if (files != null) {
-                facadeManager.importFiles(Arrays.asList(files));
+                facadeUtil.importFiles(Arrays.asList(files));
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -189,26 +202,19 @@ public class MainStage implements Initializable {
     public void openFileLocation(ActionEvent actionEvent) throws IOException {
         ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
         Desktop desktop = Desktop.getDesktop();
-        desktop.open(facadeManager.getSongFolder(selected.get(0)));
-    }
-
-    @FXML
-    public void deleteLibrary() {
-        toDisplay = facadeManager.createNewList();
-        displayList = FXCollections.observableList(toDisplay);
-        songTable.setItems(displayList);
+        desktop.open(facadeUtil.getSongFolder(selected.get(0)));
     }
 
     @FXML
     public void removeSong() {
         ObservableList<Song> selected;
         selected = songTable.getSelectionModel().getSelectedItems();
-        facadeManager.removeSong(selected.get(0));
+        facadeUtil.removeSong(selected.get(0));
         songTable.refresh();
     }
 
     @FXML
-    public void openDetail() {
+    public void showSongDetail() {
         ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
         Song selectedSong = selected.get(0);
         fxmlLoader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
@@ -221,11 +227,31 @@ public class MainStage implements Initializable {
             stage.setScene(scene);
             stage.showAndWait();
             if (detailStage.isFieldEdited) {
-                facadeManager.editInfo(selectedSong, detailStage.propertyMap);
+                facadeUtil.editInfo(selectedSong, detailStage.propertyMap);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    @FXML
+    public void showSongSummary(MouseEvent mouseEvent) {
+        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
+        Song song = selected.get(0);
+        Image image;
+        image = facadeUtil.getAlbumArt(song);
+        Rectangle2D rectangle2D = new Rectangle2D(0, 0, image.getWidth(), image.getHeight());
+        albumArt.setViewport(rectangle2D);
+        titleLabel.setVisible(true);
+        titleLabel.setText(song.getTitle());
+        artistLabel.setVisible(true);
+        artistLabel.setText(song.getArtist());
+        albumLabel.setVisible(true);
+        albumLabel.setText(song.getAlbum());
+        genreLabel.setVisible(true);
+        genreLabel.setText(song.getGenre());
+        albumArt.setImage(image);
     }
 
     @FXML
@@ -343,7 +369,7 @@ public class MainStage implements Initializable {
 
     @FXML
     public void exit() {
-        facadeManager.saveLibrary("library.dat");
+        facadeUtil.saveLibrary("library.dat");
         Platform.exit();
     }
 
