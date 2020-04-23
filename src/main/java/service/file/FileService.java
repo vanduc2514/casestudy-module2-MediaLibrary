@@ -17,4 +17,5 @@ public interface FileService {
     SongManager readList(File file);
 
     void setMedata(File file, HashMap<String, String> propertyMap);
+
 }

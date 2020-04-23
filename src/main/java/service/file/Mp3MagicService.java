@@ -20,17 +20,33 @@ public class Mp3MagicService extends Mp3Service {
         try {
             mp3File = new Mp3File(file);
             ID3v2 id3v2Tag = mp3File.getId3v2Tag();
-            song.setTrackNumber(id3v2Tag.getTrack());
-            song.setTitle(id3v2Tag.getTitle());
-            song.setArtist(id3v2Tag.getArtist());
-            song.setAlbum(id3v2Tag.getAlbum());
-            song.setGenre(id3v2Tag.getGenreDescription());
-            song.setComposer(id3v2Tag.getComposer());
-            song.setYear(Integer.parseInt(id3v2Tag.getYear()));
+            if (id3v2Tag.getTrack() != null) {
+                song.setTrackNumber(id3v2Tag.getTrack());
+            }
+            if (id3v2Tag.getTitle() != null) {
+                song.setTitle(id3v2Tag.getTitle());
+            }
+            if (id3v2Tag.getArtist() != null) {
+                song.setArtist(id3v2Tag.getArtist());
+            }
+            if (id3v2Tag.getAlbum() != null) {
+                song.setAlbum(id3v2Tag.getAlbum());
+            }
+            if (id3v2Tag.getGenreDescription() != null) {
+                song.setGenre(id3v2Tag.getGenreDescription());
+            }
+            if (id3v2Tag.getComposer() != null) {
+                song.setComposer(id3v2Tag.getComposer());
+            }
+            if (id3v2Tag.getYear() != null) {
+                song.setYear(Integer.parseInt(id3v2Tag.getYear()));
+            }
+            if (id3v2Tag.getAlbumImage() != null) {
+                song.setAlbumArt(id3v2Tag.getAlbumImage());
+            }
             song.setDuration(Duration.ofMillis(mp3File.getLengthInMilliseconds()));
             song.setBitrate(mp3File.getBitrate());
             song.setSampleRate(mp3File.getSampleRate());
-            song.setAlbumArt(id3v2Tag.getAlbumImage());
             song.setPath(file.getAbsolutePath());
             return song;
         } catch (IOException | UnsupportedTagException | InvalidDataException e) {
@@ -52,7 +68,10 @@ public class Mp3MagicService extends Mp3Service {
             id3v2Tag.setGenreDescription(propertyMap.get("genre"));
             id3v2Tag.setComposer(propertyMap.get("composer"));
             id3v2Tag.setYear(propertyMap.get("year"));
-            setAlbumArt(file, propertyMap, id3v2Tag);
+            if (propertyMap.get("albumPath") != null) {
+                byte[] albumArt = getAlbumArt(propertyMap);
+                id3v2Tag.setAlbumImage(albumArt, getMimeType(albumArt));
+            }
         } catch (IOException | UnsupportedTagException | InvalidDataException e) {
             e.printStackTrace();
         }
@@ -63,22 +82,24 @@ public class Mp3MagicService extends Mp3Service {
         } catch (IOException | NotSupportedException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void setAlbumArt(File file, HashMap<String, String> hashMap, ID3v2 id3v2Tag) throws IOException {
-        if (hashMap.get("albumArtPath") != null) {
-            File albumArtPath = new File(hashMap.get("albumArtPath"));
-            if (!albumArtPath.exists()) {
-                throw new FileNotFoundException("File not exits!");
-            }
-            InputStream inputStream = new FileInputStream(albumArtPath);
-            byte[] albumArt = new byte[(int) file.length()];
-            if (inputStream.read(albumArt) != -1) {
-                String mimeType = URLConnection.guessContentTypeFromStream(inputStream);
-                id3v2Tag.setAlbumImage(albumArt, mimeType);
-            }
+    private byte[] getAlbumArt(HashMap<String, String> hashMap) throws IOException, NullPointerException {
+        File albumArtFile = new File(hashMap.get("albumArtPath"));
+        if (!albumArtFile.exists()) {
+            throw new FileNotFoundException("File not exits!");
         }
+        InputStream inputStream = new FileInputStream(albumArtFile);
+        byte[] albumArt = new byte[(int) albumArtFile.length()];
+        if (inputStream.read(albumArt) != -1) {
+            return albumArt;
+        }
+        return null;
+    }
+
+    private String getMimeType(byte[] byteData) throws IOException {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(byteData);
+        return URLConnection.guessContentTypeFromStream(inputStream);
     }
 
     private void renameModifiedFile(File file) throws IOException {
@@ -87,7 +108,8 @@ public class Mp3MagicService extends Mp3Service {
             if (!modifiedFile.renameTo(new File(file.getAbsolutePath()))) {
                 throw new IOException("Error!");
             }
+        } else {
+            throw new IOException();
         }
     }
-
 }

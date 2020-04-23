@@ -4,13 +4,12 @@ package main.java.service.facade;/*
  */
 
 import main.java.model.Song;
-
 import java.io.File;
 import java.util.AbstractMap;
 import java.util.List;
 
 //Facade Pattern + Strategy Pattern
-public interface ManagerFacade {
+public interface FacadeManager {
     List<Song> createNewList();
 
     List<Song> loadDisplayList(String path);
@@ -19,7 +18,7 @@ public interface ManagerFacade {
 
     void saveLibrary(String path);
 
-    void importFile(List<File> files);
+    void importFiles(List<File> files);
 
     Song getLastImport();
 
@@ -27,7 +26,7 @@ public interface ManagerFacade {
 
     void deleteSong(Song song);
 
-    Song editInfo(Song song, AbstractMap<String, String> propertyMap);
+    void editInfo(Song song, AbstractMap<String, String> propertyMap);
 
     File getSongFolder(Song song);
 }

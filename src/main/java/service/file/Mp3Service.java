@@ -4,6 +4,7 @@ package main.java.service.file;/*
  */
 
 import main.java.model.Song;
+import main.java.service.song.LinkedListManager;
 import main.java.service.song.SongManager;
 import java.io.*;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 //Template Pattern
 public abstract class Mp3Service implements FileService {
     @Override
-    public void importSong(File file, SongManager songManager) {
+    public final void importSong(File file, SongManager songManager) {
         Song song = parseSong(file);
         if (!songManager.getSongList().contains(song)) {
             songManager.addSong(song);
@@ -19,7 +20,7 @@ public abstract class Mp3Service implements FileService {
     }
 
     @Override
-    public void saveList(File file, SongManager songManager) {
+    public final void saveList(File file, SongManager songManager) {
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -38,16 +39,16 @@ public abstract class Mp3Service implements FileService {
     }
 
     @Override
-    public SongManager readList(File file) {
+    public final SongManager readList(File file) {
         InputStream inputStream;
-        SongManager manager = null;
+        SongManager manager;
         try {
             inputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             manager = (SongManager) objectInputStream.readObject();
             inputStream.close();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            manager = new LinkedListManager();
         }
         return manager;
     }

@@ -21,8 +21,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import main.java.model.Song;
-import main.java.service.facade.ManagerFacade;
-import main.java.service.facade.MyManager;
+import main.java.service.facade.FacadeManager;
+import main.java.service.facade.MyFacadeManager;
 import java.awt.*;
 import java.io.File;
 import java.io.FileFilter;
@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 public class MainStage implements Initializable {
     private ObservableList<Song> displayList;
     private FileChooser fileChooser = new FileChooser();
-    ManagerFacade manager;
+    FacadeManager facadeManager;
     List<Song> toDisplay;
 
     @FXML
@@ -62,13 +62,13 @@ public class MainStage implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        manager = MyManager.getInstance();
+        facadeManager = MyFacadeManager.getInstance();
         try {
-            toDisplay = manager.loadDisplayList("library.dat");
+            toDisplay = facadeManager.loadDisplayList("library.dat");
         } catch (NullPointerException ex) {
-            toDisplay = manager.createNewList();
+            toDisplay = facadeManager.createNewList();
         }
-        displayList = FXCollections.observableArrayList(toDisplay);
+        displayList = FXCollections.observableList(toDisplay);
         configTable();
     }
 
@@ -79,12 +79,11 @@ public class MainStage implements Initializable {
         try {
             List<File> files = fileChooser.showOpenMultipleDialog(new Stage());
             fileChooser.setInitialDirectory(files.get(0).getParentFile());
-            manager.importFile(files);
+            facadeManager.importFiles(files);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        displayList = FXCollections.observableArrayList(manager.getDisplayList());
-        songTable.setItems(displayList);
+        songTable.refresh();
     }
 
     @FXML
@@ -99,29 +98,27 @@ public class MainStage implements Initializable {
                 }
             });
             if (files != null) {
-                manager.importFile(Arrays.asList(files));
+                facadeManager.importFiles(Arrays.asList(files));
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        displayList = FXCollections.observableArrayList(manager.getDisplayList());
-        songTable.setItems(displayList);
+        songTable.refresh();
     }
 
     @FXML
     public void deleteLibrary() {
-        toDisplay = manager.createNewList();
-        displayList = FXCollections.observableArrayList(toDisplay);
+        toDisplay = facadeManager.createNewList();
+        displayList = FXCollections.observableList(toDisplay);
         songTable.setItems(displayList);
     }
 
     @FXML
     public void removeSong() {
-        ObservableList<Song> current, selected;
-        current = songTable.getItems();
+        ObservableList<Song> selected;
         selected = songTable.getSelectionModel().getSelectedItems();
-        current.removeAll(selected);
-        manager.removeSong(selected.get(0));
+        facadeManager.removeSong(selected.get(0));
+        songTable.refresh();
     }
 
     @FXML
@@ -138,10 +135,7 @@ public class MainStage implements Initializable {
             stage.setScene(scene);
             stage.showAndWait();
             if (detailStage.isFieldEdited) {
-                removeSong();
-                Song song = manager.editInfo(selectedSong,detailStage.propertyMap);
-                displayList.add(song);
-                songTable.sort();
+                facadeManager.editInfo(selectedSong, detailStage.propertyMap);
             }
             songTable.refresh();
         } catch (IOException e) {
@@ -153,7 +147,7 @@ public class MainStage implements Initializable {
     public void openLocation(ActionEvent actionEvent) throws IOException {
         ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
         Desktop desktop = Desktop.getDesktop();
-        desktop.open(manager.getSongFolder(selected.get(0)));
+        desktop.open(facadeManager.getSongFolder(selected.get(0)));
     }
 
     @FXML
@@ -166,7 +160,7 @@ public class MainStage implements Initializable {
 
     @FXML
     public void exit() throws IOException {
-        manager.saveLibrary("library.dat");
+        facadeManager.saveLibrary("library.dat");
         Platform.exit();
     }
 
@@ -175,12 +169,12 @@ public class MainStage implements Initializable {
         detailStage.title.setText(selectedSong.getTitle());
         detailStage.artist.setText(selectedSong.getArtist());
         detailStage.album.setText(selectedSong.getAlbum());
-        detailStage.composer.setText(selectedSong.getCreator());
+        detailStage.composer.setText(selectedSong.getComposer());
         detailStage.genre.setText(selectedSong.getGenre());
         detailStage.year.setText(String.valueOf(selectedSong.getYear()));
         detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
-        detailStage.bitrate.setText(selectedSong.getBitrate() + "kbps");
-        detailStage.sampleRate.setText(selectedSong.getSampleRate() + "Khz");
+        detailStage.bitrate.setText(selectedSong.getBitrate() + " kbps");
+        detailStage.sampleRate.setText(selectedSong.getSampleRate() + " Khz");
     }
 
     private void configTable() {
@@ -188,7 +182,7 @@ public class MainStage implements Initializable {
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         artistColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
         albumColumn.setCellValueFactory(new PropertyValueFactory<>("album"));
-        creatorColumn.setCellValueFactory(new PropertyValueFactory<>("creator"));
+        creatorColumn.setCellValueFactory(new PropertyValueFactory<>("composer"));
         genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
         durationColumn.setCellFactory(new Callback<TableColumn<Song, Duration>, TableCell<Song, Duration>>() {
             @Override

@@ -5,22 +5,37 @@ package main.java.model;/*
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.LocalDateTime;
 
-public class Song implements Serializable {
+public class Song implements Serializable, Comparable<Song> {
     private String trackNumber;
     private String title;
     private String artist;
     private String album;
     private String genre;
-    private String creator;
+    private String composer;
     private int year;
     private Duration duration;
     private int bitrate;
     private int sampleRate;
     private byte[] albumArt;
     private String path;
+    private LocalDateTime importTime;
 
     public Song() {
+        trackNumber = "";
+        title = "";
+        artist = "";
+        album = "";
+        genre = "";
+        composer = "";
+        year = 0;
+        duration = null;
+        bitrate = 0;
+        sampleRate = 0;
+        albumArt = null;
+        path = "";
+        importTime = LocalDateTime.now();
     }
 
     public String getTrackNumber() {
@@ -63,12 +78,12 @@ public class Song implements Serializable {
         this.genre = genre;
     }
 
-    public String getCreator() {
-        return creator;
+    public String getComposer() {
+        return composer;
     }
 
     public void setComposer(String creator) {
-        this.creator = creator;
+        this.composer = creator;
     }
 
     public int getYear() {
@@ -119,18 +134,28 @@ public class Song implements Serializable {
         this.path = path;
     }
 
+    public LocalDateTime getImportTime() {
+        return importTime;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if(getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass()) {
             return false;
         }
-        Song song = (Song) obj;
-        if (this.title.equals(song.getTitle())) {
-            if (this.artist.equals(song.getArtist())) {
-                return this.album.equals(song.getAlbum());
-            }
-        }
-        return false;
+        Song anotherSong = (Song) obj;
+        return (this.trackNumber.equals(anotherSong.trackNumber)
+                && this.title.equals(anotherSong.title)
+                && this.artist.equals(anotherSong.artist)
+                && this.album.equals(anotherSong.album)
+                && this.genre.equals(anotherSong.genre)
+                && this.composer.equals(anotherSong.composer)
+                && this.year == anotherSong.year);
+    }
+
+    @Override
+    public int compareTo(Song anotherSong) {
+        return title.compareTo(anotherSong.getTitle());
     }
 
     @Override

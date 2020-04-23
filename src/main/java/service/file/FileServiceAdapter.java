@@ -6,11 +6,12 @@ package main.java.service.file;/*
 import main.java.model.Song;
 import main.java.service.song.SongManager;
 
-import java.io.File;
+import java.io.*;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 
+//Adapter Pattern
 public class FileServiceAdapter {
     private FileService fileService;
     private File file;
@@ -85,5 +86,17 @@ public class FileServiceAdapter {
         file = new File(path);
         HashMap<String, String> hashMap = (HashMap<String, String>) propertyMap;
         fileService.setMedata(file, hashMap);
+    }
+
+    public byte[] getAlbumArt(String path) throws IOException {
+        File file = new File(path);
+        InputStream inputStream = new FileInputStream(file);
+        byte[] albumArt = new byte[(int) file.length()];
+        if (file.length() > 0) {
+            if (inputStream.read(albumArt) != -1) {
+                return albumArt;
+            }
+        }
+        return null;
     }
 }

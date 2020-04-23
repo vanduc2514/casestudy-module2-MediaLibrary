@@ -5,27 +5,30 @@ package main.java.service.facade;/*
 
 import main.java.model.Song;
 import main.java.service.file.FileService;
+import main.java.service.file.FileServiceAdapter;
 import main.java.service.file.Mp3MagicService;
 import main.java.service.song.LinkedListManager;
 import main.java.service.song.SongManager;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 
-//Singleton Pattern + Facade Pattern
-public class MyManager implements ManagerFacade {
+//Singleton Pattern + Facade Pattern + Adapter Pattern
+public class MyFacadeManager implements FacadeManager {
     private static FileService fileService;
     private static SongManager songManager;
     private File file;
-    private static MyManager manager;
+    private static MyFacadeManager manager;
 
-    private MyManager() {
+    private MyFacadeManager() {
     }
 
-    public static MyManager getInstance() {
+    public static MyFacadeManager getInstance() {
         if (manager == null) {
-            manager = new MyManager();
+            manager = new MyFacadeManager();
             songManager = new LinkedListManager();
             fileService = new Mp3MagicService();
         }
@@ -57,7 +60,7 @@ public class MyManager implements ManagerFacade {
     }
 
     @Override
-    public void importFile(List<File> files) {
+    public void importFiles(List<File> files) {
         for (File file : files) {
             fileService.importSong(file, songManager);
         }
@@ -82,17 +85,37 @@ public class MyManager implements ManagerFacade {
     }
 
     @Override
-    public Song editInfo(Song song, AbstractMap<String, String> propertyMap) {
+    public void editInfo(Song song, AbstractMap<String, String> propertyMap) {
         file = new File(song.getPath());
         HashMap<String, String> mapConverted = (HashMap<String, String>) propertyMap;
         fileService.setMedata(file, mapConverted);
-        fileService.importSong(file, songManager);
-        return songManager.getLastAdd();
+        updateSongInfo(song, mapConverted);
     }
 
     @Override
     public File getSongFolder(Song song) {
         file = new File(song.getPath());
         return file.getParentFile();
+    }
+
+    private void updateSongInfo(Song song, HashMap<String, String> propertyMap) {
+        song.setTrackNumber(propertyMap.get("track"));
+        song.setTitle(propertyMap.get("title"));
+        song.setArtist(propertyMap.get("artist"));
+        song.setAlbum(propertyMap.get("album"));
+        song.setGenre(propertyMap.get("genre"));
+        song.setComposer(propertyMap.get("composer"));
+        song.setYear(Integer.parseInt(propertyMap.get("year")));
+        if (propertyMap.get("albumArtPath") != null) {
+            String path = propertyMap.get("albumArtPath");
+            FileServiceAdapter adapter = new FileServiceAdapter(fileService);
+            byte[] albumArt = new byte[0];
+            try {
+                albumArt = adapter.getAlbumArt(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            song.setAlbumArt(albumArt);
+        }
     }
 }
