@@ -9,7 +9,6 @@ import main.java.service.file.FileServiceAdapter;
 import main.java.service.file.Mp3MagicService;
 import main.java.service.song.LinkedListManager;
 import main.java.service.song.SongManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;

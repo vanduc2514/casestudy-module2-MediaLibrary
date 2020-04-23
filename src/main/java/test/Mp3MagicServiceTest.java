@@ -4,6 +4,7 @@ import com.mpatric.mp3agic.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
     @Test
     void parseSong() throws InvalidDataException, IOException, UnsupportedTagException {
         Mp3File mp3File = new Mp3File("F:/Users/Duc/Downloads/Khoi Dau - Hoang Thuy Linh (1).mp3");
-        ID3v1 id3v1tag = mp3File.getId3v1Tag();
-        System.out.println(mp3File.hasId3v2Tag());
+        ID3v2 id3v2tag = mp3File.getId3v2Tag();
+        CharSequence text;
+        Duration duration = Duration.ofMillis(mp3File.getLength());
+        System.out.println(duration);
     }
 }

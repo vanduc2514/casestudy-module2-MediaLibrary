@@ -14,7 +14,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -23,6 +25,9 @@ import javafx.util.Callback;
 import main.java.model.Song;
 import main.java.service.facade.FacadeManager;
 import main.java.service.facade.MyFacadeManager;
+import main.resources.controllers.sorter.Sorter;
+import main.resources.controllers.sorter.SorterUseComparator;
+
 import java.awt.*;
 import java.io.File;
 import java.io.FileFilter;
@@ -34,11 +39,51 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainStage implements Initializable {
-    private ObservableList<Song> displayList;
-    private FileChooser fileChooser = new FileChooser();
-    FacadeManager facadeManager;
-    List<Song> toDisplay;
 
+    private ObservableList<Song> displayList;
+    private List<Song> toDisplay;
+    private FacadeManager facadeManager;
+    private Sorter sorter;
+    private FileChooser fileChooser = new FileChooser();
+    public Stage stage;
+    public Scene scene;
+    public Parent root;
+    public FXMLLoader fxmlLoader;
+
+    @FXML
+    public ToggleGroup sortBy;
+    @FXML
+    public RadioMenuItem trackSort;
+    @FXML
+    public RadioMenuItem titleSort;
+    @FXML
+    public RadioMenuItem artistSort;
+    @FXML
+    public RadioMenuItem albumSort;
+    @FXML
+    public RadioMenuItem genreSort;
+    @FXML
+    public RadioMenuItem composerSort;
+    @FXML
+    public RadioMenuItem yearSort;
+    @FXML
+    public RadioMenuItem durationSort;
+    @FXML
+    public ToggleGroup order;
+    @FXML
+    public RadioMenuItem ascendingOrder;
+    @FXML
+    public RadioMenuItem descendingOrder;
+    @FXML
+    public Label titleLabel;
+    @FXML
+    public Label artistLabel;
+    @FXML
+    public Label albumLabel;
+    @FXML
+    public ImageView albumArt;
+    @FXML
+    public Label libraryName;
     @FXML
     public ContextMenu contextTable;
     @FXML
@@ -58,7 +103,7 @@ public class MainStage implements Initializable {
     @FXML
     public TableColumn<Song, String> creatorColumn;
     @FXML
-    public TableColumn<Song, Integer> sampleRateColumn;
+    public TableColumn<Song, Integer> bitRateColumn;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,9 +112,30 @@ public class MainStage implements Initializable {
             toDisplay = facadeManager.loadDisplayList("library.dat");
         } catch (NullPointerException ex) {
             toDisplay = facadeManager.createNewList();
+        } finally {
+            displayList = FXCollections.observableList(toDisplay);
+            configTable();
+            sorter = new SorterUseComparator(displayList);
         }
-        displayList = FXCollections.observableList(toDisplay);
-        configTable();
+    }
+
+    @FXML
+    public void createNewLibrary(ActionEvent actionEvent) {
+        stage = new Stage();
+        fxmlLoader = new FXMLLoader(getClass().getResource("../view/MessageStage.fxml"));
+        try {
+            root = fxmlLoader.load();
+            MessageStage messageStage = fxmlLoader.getController();
+            messageStage.message.setText("Nhập tên của thư viện");
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.showAndWait();
+            if (messageStage.isOkButtonPressed) {
+                libraryName.setText("Đây là thư viện của " + messageStage.userInput.getText());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -83,7 +149,14 @@ public class MainStage implements Initializable {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        songTable.refresh();
+        displayList = FXCollections.observableList(toDisplay);
+        if (order.getSelectedToggle() == ascendingOrder) {
+            ascendingSort();
+        } else if (order.getSelectedToggle() == descendingOrder) {
+            descendingSort();
+        }
+        songTable.setItems(displayList);
+
     }
 
     @FXML
@@ -103,7 +176,20 @@ public class MainStage implements Initializable {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        songTable.refresh();
+        displayList = FXCollections.observableList(toDisplay);
+        if (order.getSelectedToggle() == ascendingOrder) {
+            ascendingSort();
+        } else if (order.getSelectedToggle() == descendingOrder) {
+            descendingSort();
+        }
+        songTable.setItems(displayList);
+    }
+
+    @FXML
+    public void openFileLocation(ActionEvent actionEvent) throws IOException {
+        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
+        Desktop desktop = Desktop.getDesktop();
+        desktop.open(facadeManager.getSongFolder(selected.get(0)));
     }
 
     @FXML
@@ -125,29 +211,21 @@ public class MainStage implements Initializable {
     public void openDetail() {
         ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
         Song selectedSong = selected.get(0);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
-        Stage stage = new Stage();
+        fxmlLoader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
+        stage = new Stage();
         try {
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            DetailStage detailStage = loader.getController();
+            root = fxmlLoader.load();
+            scene = new Scene(root);
+            DetailStage detailStage = fxmlLoader.getController();
             setSongDetail(selectedSong, detailStage);
             stage.setScene(scene);
             stage.showAndWait();
             if (detailStage.isFieldEdited) {
                 facadeManager.editInfo(selectedSong, detailStage.propertyMap);
             }
-            songTable.refresh();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @FXML
-    public void openLocation(ActionEvent actionEvent) throws IOException {
-        ObservableList<Song> selected = songTable.getSelectionModel().getSelectedItems();
-        Desktop desktop = Desktop.getDesktop();
-        desktop.open(facadeManager.getSongFolder(selected.get(0)));
     }
 
     @FXML
@@ -159,7 +237,112 @@ public class MainStage implements Initializable {
     }
 
     @FXML
-    public void exit() throws IOException {
+    public void sortByTrack() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByTrackNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByTrackReverse();
+    }
+
+    @FXML
+    public void sortByTitle() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByTitleNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByTitleNatural();
+    }
+
+    @FXML
+    public void sortByArtist() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByArtistNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByArtistReverse();
+    }
+
+    @FXML
+    public void sortByAlbum() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByAlbumNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByAlbumReverse();
+    }
+
+    @FXML
+    public void sortByGenre() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByGenreNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByGenreReverse();
+    }
+
+    @FXML
+    public void sortByYear() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByYearNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByYearReverse();
+    }
+
+    @FXML
+    public void sortByComposer() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByComposerNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByComposerReverse();
+
+    }
+
+    @FXML
+    public void sortByDuration() {
+        if (order.getSelectedToggle() == ascendingOrder) {
+            sorter.sortByDurationNatural();
+        } else if (order.getSelectedToggle() == descendingOrder)
+            sorter.sortByDurationReverse();
+    }
+
+
+    @FXML
+    public void ascendingSort() {
+        if (sortBy.getSelectedToggle() == trackSort) {
+            sorter.sortByTrackNatural();
+        } else if (sortBy.getSelectedToggle() == titleSort) {
+            sorter.sortByTitleNatural();
+        } else if (sortBy.getSelectedToggle() == artistSort) {
+            sorter.sortByArtistNatural();
+        } else if (sortBy.getSelectedToggle() == albumSort) {
+            sorter.sortByAlbumNatural();
+        } else if (sortBy.getSelectedToggle() == genreSort) {
+            sorter.sortByGenreNatural();
+        } else if (sortBy.getSelectedToggle() == composerSort) {
+            sorter.sortByComposerNatural();
+        } else if (sortBy.getSelectedToggle() == yearSort) {
+            sorter.sortByYearNatural();
+        } else sorter.sortByDurationNatural();
+    }
+
+    @FXML
+    public void descendingSort() {
+        if (sortBy.getSelectedToggle() == trackSort) {
+            sorter.sortByTrackReverse();
+        } else if (sortBy.getSelectedToggle() == titleSort) {
+            sorter.sortByTitleReverse();
+        } else if (sortBy.getSelectedToggle() == artistSort) {
+            sorter.sortByArtistReverse();
+        } else if (sortBy.getSelectedToggle() == albumSort) {
+            sorter.sortByAlbumReverse();
+        } else if (sortBy.getSelectedToggle() == genreSort) {
+            sorter.sortByGenreReverse();
+        } else if (sortBy.getSelectedToggle() == composerSort) {
+            sorter.sortByComposerReverse();
+        } else if (sortBy.getSelectedToggle() == yearSort) {
+            sorter.sortByYearReverse();
+        } else sorter.sortByDurationReverse();
+
+    }
+
+    @FXML
+    public void exit() {
         facadeManager.saveLibrary("library.dat");
         Platform.exit();
     }
@@ -200,7 +383,7 @@ public class MainStage implements Initializable {
                 };
             }
         });
-        sampleRateColumn.setCellValueFactory(new PropertyValueFactory<>("sampleRate"));
+        bitRateColumn.setCellValueFactory(new PropertyValueFactory<>("bitrate"));
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
         songTable.setItems(displayList);
     }
