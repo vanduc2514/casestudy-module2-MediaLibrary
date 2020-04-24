@@ -84,6 +84,7 @@ public class LibraryUtil implements FacadeUtil {
     @Override
     public List<SongDao> createNewList() {
         songManager = new SongDaoManagerImp();
+        fileService = new Mp3MagicService();
         return songManager.getSongDaoList();
     }
 
@@ -119,6 +120,9 @@ public class LibraryUtil implements FacadeUtil {
 
     @Override
     public void removeSong(SongDao song) {
+        song.getArtistDao().getSongDaoList().remove(song);
+        song.getAlbumDao().getSongDaoList().remove(song);
+        song.getGenreDao().getSongDaoList().remove(song);
         songManager.removeSongDao(song);
     }
 

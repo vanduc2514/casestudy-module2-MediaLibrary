@@ -8,26 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SongDaoManagerImp implements SongDaoManager {
-    private List<SongDao> SongDaoList;
+    private List<SongDao> songDaoList;
 
     public SongDaoManagerImp() {
-        SongDaoList = new ArrayList<>();
+        songDaoList = new ArrayList<>();
     }
 
     public void addSongDao(SongDao SongDao) {
-        SongDaoList.add(SongDao);
+        songDaoList.add(SongDao);
     }
 
     public void removeSongDao(SongDao SongDao) {
-        SongDaoList.remove(SongDao);
+        songDaoList.remove(SongDao);
     }
 
     public List<SongDao> getSongDaoList() {
-        return SongDaoList;
+        return songDaoList;
     }
 
     public SongDao getLastAdd() {
-        return SongDaoList.get(SongDaoList.size() - 1);
+        return songDaoList.get(songDaoList.size() - 1);
     }
-
 }

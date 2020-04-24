@@ -152,7 +152,7 @@ public class SongDao implements Serializable, Comparable<SongDao> {
         SongDao songDao = (SongDao) obj;
         return (title.equals(songDao.getTitle())
                 && artistDao.getTitle().equals(songDao.getArtistDao().getTitle())
-                && albumDao.getTitle().equals(songDao.getArtistDao().getTitle()));
+                && albumDao.getTitle().equals(songDao.getAlbumDao().getTitle()));
     }
 
     @Override
