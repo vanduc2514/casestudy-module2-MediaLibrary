@@ -3,20 +3,6 @@ package main.java.service.file;/*
  * @author Duc on 4/24/2020
  */
 
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-import main.java.model.AlbumDao;
-import main.java.model.ArtistDao;
-import main.java.model.GenreDao;
-import main.java.model.SongDao;
-import main.java.service.dao.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
 public abstract class NewMp3Service {
 //    private ArtistManager artistManager = new ArtistManagerImp();
 //    private AlbumManager albumManager = new AlbumManagerImp();

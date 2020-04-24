@@ -6,11 +6,11 @@ package main.java.model;/*
 import java.util.List;
 
 public interface SongData extends Comparable<SongData> {
-    abstract String getTitle();
+   String getTitle();
 
-    abstract void setTitle(String title);
+    void setTitle(String title);
 
-    abstract List<SongDao> getSongDaoList();
+    List<SongDao> getSongDaoList();
 
     int compareTo(SongData anotherData);
 }

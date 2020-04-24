@@ -5,16 +5,18 @@ package main.java.service.facade;/*
 
 import javafx.scene.image.Image;
 import main.java.model.*;
-import main.java.service.dao.SongDaoManager;
-import main.java.service.dao.SongDaoManagerImp;
+import main.java.service.manager.SongDaoManager;
+import main.java.service.manager.SongDaoManagerImp;
 import main.java.service.file.FileService;
 import main.java.service.file.FileUtil;
 import main.java.service.file.Mp3MagicService;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,17 +41,43 @@ public class LibraryUtil implements FacadeUtil {
 
     public List<SongData> getArtistDaoList() {
         Mp3MagicService service = (Mp3MagicService) fileService;
+        List<SongData> listArtist = new ArrayList<>();
+        if (service.getArtistDaoList().isEmpty()) {
+            for (SongDao songDao : songManager.getSongDaoList()) {
+                if (!listArtist.contains(songDao.getArtistDao())) {
+                    listArtist.add(songDao.getArtistDao());
+                }
+            }
+            return listArtist;
+        }
         return service.getArtistDaoList();
     }
 
     public List<SongData> getAlbumDaoList() {
         Mp3MagicService service = (Mp3MagicService) fileService;
+        List<SongData> listAlbum = new ArrayList<>();
+        if (service.getAlbumDaoList().isEmpty()) {
+            for (SongDao songDao : songManager.getSongDaoList()) {
+                if (!listAlbum.contains(songDao.getAlbumDao())) {
+                    listAlbum.add(songDao.getAlbumDao());
+                }
+            }
+            return listAlbum;
+        }
         return service.getAlbumDaoList();
-
     }
 
     public List<SongData> getGenreDaoList() {
         Mp3MagicService service = (Mp3MagicService) fileService;
+        List<SongData> listGenre = new ArrayList<>();
+        if (service.getGenreDaoList().isEmpty()) {
+            for (SongDao songDao : songManager.getSongDaoList()) {
+                if (!listGenre.contains(songDao.getGenreDao())) {
+                    listGenre.add(songDao.getGenreDao());
+                }
+            }
+            return listGenre;
+        }
         return service.getGenreDaoList();
     }
 

@@ -100,7 +100,7 @@ public class MainStage implements Initializable {
     @FXML
     public Label libraryName;
     @FXML
-    public ContextMenu contextTable;
+    public ContextMenu contextMenu;
     @FXML
     public TableView<SongDao> songTable;
     @FXML
@@ -346,6 +346,7 @@ public class MainStage implements Initializable {
             songList.getItems().addAll(data.getSongDaoList());
             tab.setContent(songList);
             tabPane.getTabs().add(tab);
+            tabPane.setContextMenu(contextMenu);
         }
         return tabPane;
     }

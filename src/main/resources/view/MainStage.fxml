@@ -61,7 +61,7 @@
                     </RadioMenuItem>
                     <RadioMenuItem fx:id="titleSort" mnemonicParsing="false" onAction="#sortByTitle" text="Sắp xếp theo Bài hát" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="artistSort" mnemonicParsing="false" onAction="#sortByArtist" text="Sắp xếp theo Ca sỹ" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="albumSort" mnemonicParsing="false" onAction="#sortByAlbum" text="Sắp xếp theo AlbumDao" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="albumSort" mnemonicParsing="false" onAction="#sortByAlbum" text="Sắp xếp theo Album" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="genreSort" mnemonicParsing="false" onAction="#sortByGenre" text="Sắp xếp theo Thể loại" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="composerSort" mnemonicParsing="false" onAction="#sortByComposer" text="Sắp xếp theo Soạn nhạc" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="yearSort" mnemonicParsing="false" onAction="#sortByYear" text="Sắp xếp theo Năm" toggleGroup="$sortBy" />
@@ -86,14 +86,14 @@
                 <TableColumn fx:id="trackColumn" prefWidth="66.0" text="Track" />
                 <TableColumn fx:id="titleColumn" editable="false" minWidth="270.0" prefWidth="337.0" text="Tựa đề" />
                 <TableColumn fx:id="artistColumn" minWidth="0.0" prefWidth="108.0" text="Ca sỹ" />
-                <TableColumn fx:id="albumColumn" prefWidth="200.0" text="AlbumDao" />
+                <TableColumn fx:id="albumColumn" prefWidth="200.0" text="Album" />
                 <TableColumn fx:id="creatorColumn" prefWidth="120.0" text="Tác giả" />
                 <TableColumn fx:id="genreColumn" prefWidth="115.0" text="Thể loại" />
                 <TableColumn fx:id="durationColumn" prefWidth="88.0" text="Thời lượng" />
                 <TableColumn fx:id="bitRateColumn" prefWidth="111.0" text="Bitrate" />
             </columns>
             <contextMenu>
-                <ContextMenu fx:id="contextTable">
+                <ContextMenu fx:id="contextMenu">
                     <items>
                         <Menu mnemonicParsing="false" text="Thêm">
                             <MenuItem mnemonicParsing="false" onAction="#addFiles" text="Thêm từ Files..." />
@@ -124,7 +124,7 @@
             <Separator prefWidth="200.0" />
             <Button mnemonicParsing="false" onAction="#showArtistPane" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" onAction="#showAlbumPane" prefHeight="50.0" prefWidth="200.0" text="AlbumDao" />
+            <Button mnemonicParsing="false" onAction="#showAlbumPane" prefHeight="50.0" prefWidth="200.0" text="Album" />
             <Separator prefWidth="200.0" />
             <Button mnemonicParsing="false" onAction="#showGenrePane" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
             <Pane prefHeight="420.0" prefWidth="200.0">
@@ -136,7 +136,7 @@
                 </ImageView>
                 <Label fx:id="titleLabel" alignment="CENTER" layoutX="10.0" layoutY="211.0" prefHeight="50.0" prefWidth="180.0" text="Tên Bài Hát" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Label fx:id="artistLabel" alignment="CENTER" layoutX="10.0" layoutY="256.0" prefHeight="50.0" prefWidth="180.0" text="Tên Ca sỹ" textAlignment="CENTER" visible="false" wrapText="true" />
-                <Label fx:id="albumLabel" alignment="CENTER" layoutX="10.0" layoutY="306.0" prefHeight="50.0" prefWidth="180.0" text="Tên AlbumDao" textAlignment="CENTER" visible="false" wrapText="true" />
+                <Label fx:id="albumLabel" alignment="CENTER" layoutX="10.0" layoutY="306.0" prefHeight="50.0" prefWidth="180.0" text="Tên Album" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Label fx:id="genreLabel" alignment="CENTER" layoutX="10.0" layoutY="356.0" prefHeight="50.0" prefWidth="180.0" text="Tên Thể Loại" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Separator layoutY="421.0" prefHeight="0.0" prefWidth="200.0" />
             </Pane>
