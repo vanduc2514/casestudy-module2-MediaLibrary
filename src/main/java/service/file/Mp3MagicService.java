@@ -12,8 +12,7 @@ import java.time.Duration;
 import java.util.HashMap;
 
 //Concrete Class
-public class Mp3MagicService extends Mp3Service {
-    @Override
+public class Mp3MagicService {
     public Song parseSong(File file) {
         Song song = new Song();
         Mp3File mp3File;
@@ -55,7 +54,6 @@ public class Mp3MagicService extends Mp3Service {
         return song;
     }
 
-    @Override
     public void setMedata(File file, HashMap<String, String> propertyMap) {
         Mp3File mp3File = null;
         try {

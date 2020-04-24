@@ -4,13 +4,12 @@ package main.java.service.facade;/*
  */
 
 import javafx.scene.image.Image;
-import main.java.model.Song;
+import main.java.model.*;
+import main.java.service.dao.SongDaoManager;
+import main.java.service.dao.SongDaoManagerImp;
 import main.java.service.file.FileService;
-import main.java.service.file.FileServiceAdapter;
-import main.java.service.file.Mp3MagicService;
-import main.java.service.song.ArrayListManager;
-import main.java.service.song.SongManager;
-
+import main.java.service.file.FileUtil;
+import main.java.service.file.NewMp3MagicService;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.List;
 //Singleton Pattern + Facade Pattern + Adapter Pattern
 public class LibraryUtil implements FacadeUtil {
     private static FileService fileService;
-    private static SongManager songManager;
+    private static SongDaoManager songManager;
     private File file;
     private static LibraryUtil manager;
 
@@ -32,28 +31,44 @@ public class LibraryUtil implements FacadeUtil {
     public static LibraryUtil getInstance() {
         if (manager == null) {
             manager = new LibraryUtil();
-            songManager = new ArrayListManager();
-            fileService = new Mp3MagicService();
+            songManager = new SongDaoManagerImp();
+            fileService = new NewMp3MagicService();
         }
         return manager;
     }
 
-    @Override
-    public List<Song> createNewList() {
-        songManager = new ArrayListManager();
-        return songManager.getSongList();
+    public List<SongData> getArtistDaoList() {
+        NewMp3MagicService service = (NewMp3MagicService) fileService;
+        return service.getArtistDaoList();
+    }
+
+    public List<SongData> getAlbumDaoList() {
+        NewMp3MagicService service = (NewMp3MagicService) fileService;
+        return service.getAlbumDaoList();
+
+    }
+
+    public List<SongData> getGenreDaoList() {
+        NewMp3MagicService service = (NewMp3MagicService) fileService;
+        return service.getGenreDaoList();
     }
 
     @Override
-    public List<Song> loadDisplayList(String path) {
+    public List<SongDao> createNewList() {
+        songManager = new SongDaoManagerImp();
+        return songManager.getSongDaoList();
+    }
+
+    @Override
+    public List<SongDao> loadDisplayList(String path) {
         file = new File(path);
         songManager = fileService.readList(file);
-        return songManager.getSongList();
+        return songManager.getSongDaoList();
     }
 
     @Override
-    public List<Song> getDisplayList() {
-        return songManager.getSongList();
+    public List<SongDao> getDisplayList() {
+        return songManager.getSongDaoList();
     }
 
     @Override
@@ -70,25 +85,26 @@ public class LibraryUtil implements FacadeUtil {
     }
 
     @Override
-    public Song getLastImport() {
+    public SongDao getLastImport() {
         return songManager.getLastAdd();
     }
 
     @Override
-    public void removeSong(Song song) {
-        songManager.removeSong(song);
+    public void removeSong(SongDao song) {
+        songManager.removeSongDao(song);
     }
 
     @Override
-    public void deleteSong(Song song) {
+    public void deleteSong(SongDao song) {
         file = new File(song.getPath());
         if (!file.delete()) {
             throw new UnsupportedOperationException("Error delete File!");
         }
+        removeSong(song);
     }
 
     @Override
-    public void editInfo(Song song, AbstractMap<String, String> propertyMap) {
+    public void editInfo(SongDao song, AbstractMap<String, String> propertyMap) {
         file = new File(song.getPath());
         HashMap<String, String> mapConverted = (HashMap<String, String>) propertyMap;
         fileService.setMedata(file, mapConverted);
@@ -96,25 +112,24 @@ public class LibraryUtil implements FacadeUtil {
     }
 
     @Override
-    public File getSongFolder(Song song) {
+    public File getSongFolder(SongDao song) {
         file = new File(song.getPath());
         return file.getParentFile();
     }
 
-    private void updateSongInfo(Song song, HashMap<String, String> propertyMap) {
+    private void updateSongInfo(SongDao song, HashMap<String, String> propertyMap) {
         song.setTrackNumber(propertyMap.get("track"));
         song.setTitle(propertyMap.get("title"));
-        song.setArtist(propertyMap.get("artist"));
-        song.setAlbum(propertyMap.get("album"));
-        song.setGenre(propertyMap.get("genre"));
+        song.getArtistDao().setTitle(propertyMap.get("artist"));
+        song.getAlbumDao().setTitle(propertyMap.get("album"));
+        song.getGenreDao().setTitle(propertyMap.get("genre"));
         song.setComposer(propertyMap.get("composer"));
         song.setYear(Integer.parseInt(propertyMap.get("year")));
         if (propertyMap.get("albumArtPath") != null) {
             String path = propertyMap.get("albumArtPath");
-            FileServiceAdapter adapter = new FileServiceAdapter(fileService);
             byte[] albumArt = new byte[0];
             try {
-                albumArt = adapter.getAlbumArt(path);
+                albumArt = FileUtil.getInstance().getAlbumArt(path);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -123,7 +138,7 @@ public class LibraryUtil implements FacadeUtil {
     }
 
     @Override
-    public Image getAlbumArt(Song song) {
+    public Image getAlbumArt(SongDao song) {
         InputStream is = new ByteArrayInputStream(song.getAlbumArt());
         return new Image(is);
     }

@@ -5,31 +5,33 @@ package main.java.service.facade;/*
 
 import javafx.scene.image.Image;
 import main.java.model.Song;
+import main.java.model.SongDao;
+
 import java.io.File;
 import java.util.AbstractMap;
 import java.util.List;
 
 //Facade Pattern + Strategy Pattern
 public interface FacadeUtil {
-    List<Song> createNewList();
+    List<SongDao> createNewList();
 
-    List<Song> loadDisplayList(String path);
+    List<SongDao> loadDisplayList(String path);
 
-    List<Song> getDisplayList();
+    List<SongDao> getDisplayList();
 
     void saveLibrary(String path);
 
     void importFiles(List<File> files);
 
-    Song getLastImport();
+    SongDao getLastImport();
 
-    void removeSong(Song song);
+    void removeSong(SongDao song);
 
-    void deleteSong(Song song);
+    void deleteSong(SongDao song);
 
-    void editInfo(Song song, AbstractMap<String, String> propertyMap);
+    void editInfo(SongDao song, AbstractMap<String, String> propertyMap);
 
-    File getSongFolder(Song song);
+    File getSongFolder(SongDao song);
 
-    Image getAlbumArt(Song song);
+    Image getAlbumArt(SongDao song);
 }

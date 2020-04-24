@@ -12,6 +12,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.image.Image?>
@@ -24,7 +25,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="739.0" prefWidth="1244.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.controllers.MainStage">
+<BorderPane fx:id="borderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.controllers.MainStage">
     <top>
         <MenuBar BorderPane.alignment="CENTER">
             <Menu mnemonicParsing="false" text="File">
@@ -60,7 +61,7 @@
                     </RadioMenuItem>
                     <RadioMenuItem fx:id="titleSort" mnemonicParsing="false" onAction="#sortByTitle" text="Sắp xếp theo Bài hát" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="artistSort" mnemonicParsing="false" onAction="#sortByArtist" text="Sắp xếp theo Ca sỹ" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="albumSort" mnemonicParsing="false" onAction="#sortByAlbum" text="Sắp xếp theo Album" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="albumSort" mnemonicParsing="false" onAction="#sortByAlbum" text="Sắp xếp theo AlbumDao" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="genreSort" mnemonicParsing="false" onAction="#sortByGenre" text="Sắp xếp theo Thể loại" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="composerSort" mnemonicParsing="false" onAction="#sortByComposer" text="Sắp xếp theo Soạn nhạc" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="yearSort" mnemonicParsing="false" onAction="#sortByYear" text="Sắp xếp theo Năm" toggleGroup="$sortBy" />
@@ -80,12 +81,12 @@
         </MenuBar>
     </top>
     <center>
-        <TableView fx:id="songTable" blendMode="MULTIPLY" cache="true" onContextMenuRequested="#handleContextMenuTableView" onMouseClicked="#showSongSummary" prefHeight="0.0" prefWidth="1044.0" BorderPane.alignment="CENTER">
+        <TableView fx:id="songTable" blendMode="MULTIPLY" cache="true" onContextMenuRequested="#handleContextMenuTableView" BorderPane.alignment="CENTER">
             <columns>
                 <TableColumn fx:id="trackColumn" prefWidth="66.0" text="Track" />
                 <TableColumn fx:id="titleColumn" editable="false" minWidth="270.0" prefWidth="337.0" text="Tựa đề" />
                 <TableColumn fx:id="artistColumn" minWidth="0.0" prefWidth="108.0" text="Ca sỹ" />
-                <TableColumn fx:id="albumColumn" prefWidth="200.0" text="Album" />
+                <TableColumn fx:id="albumColumn" prefWidth="200.0" text="AlbumDao" />
                 <TableColumn fx:id="creatorColumn" prefWidth="120.0" text="Tác giả" />
                 <TableColumn fx:id="genreColumn" prefWidth="115.0" text="Thể loại" />
                 <TableColumn fx:id="durationColumn" prefWidth="88.0" text="Thời lượng" />
@@ -100,6 +101,7 @@
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#showSongDetail" text="Sửa Thông tin..." />
                         <MenuItem mnemonicParsing="false" onAction="#removeSong" text="Xoá Bài hát" />
+                  <MenuItem mnemonicParsing="false" onAction="#deleteSong" text="Xoá Bài hát trong máy..." />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#showSongDetail" text="Xem chi tiết..." />
                         <SeparatorMenuItem mnemonicParsing="false" />
@@ -118,23 +120,23 @@
                 <Glow />
             </effect>
             <TilePane />
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Bái hát" />
+            <Button mnemonicParsing="false" onAction="#showSongTable" prefHeight="50.0" prefWidth="200.0" text="Bái hát" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
+            <Button mnemonicParsing="false" onAction="#showArtistPane" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Album" />
+            <Button mnemonicParsing="false" onAction="#showAlbumPane" prefHeight="50.0" prefWidth="200.0" text="AlbumDao" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
-            <Pane prefHeight="422.0" prefWidth="200.0">
+            <Button mnemonicParsing="false" onAction="#showGenrePane" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
+            <Pane prefHeight="420.0" prefWidth="200.0">
                 <ImageView fx:id="albumArt" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                     <viewport>
-                        <Rectangle2D height="500.0" width="500.0"/>
+                        <Rectangle2D height="500.0" width="500.0" />
                     </viewport>
-                    <Image url="@../images/default_album_cover.png"/>
+                    <Image url="@../images/default_album_cover.png" />
                 </ImageView>
                 <Label fx:id="titleLabel" alignment="CENTER" layoutX="10.0" layoutY="211.0" prefHeight="50.0" prefWidth="180.0" text="Tên Bài Hát" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Label fx:id="artistLabel" alignment="CENTER" layoutX="10.0" layoutY="256.0" prefHeight="50.0" prefWidth="180.0" text="Tên Ca sỹ" textAlignment="CENTER" visible="false" wrapText="true" />
-                <Label fx:id="albumLabel" alignment="CENTER" layoutX="10.0" layoutY="306.0" prefHeight="50.0" prefWidth="180.0" text="Tên Album" textAlignment="CENTER" visible="false" wrapText="true" />
+                <Label fx:id="albumLabel" alignment="CENTER" layoutX="10.0" layoutY="306.0" prefHeight="50.0" prefWidth="180.0" text="Tên AlbumDao" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Label fx:id="genreLabel" alignment="CENTER" layoutX="10.0" layoutY="356.0" prefHeight="50.0" prefWidth="180.0" text="Tên Thể Loại" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Separator layoutY="421.0" prefHeight="0.0" prefWidth="200.0" />
             </Pane>
@@ -148,6 +150,12 @@
                     <Font name="System Bold" size="18.0" />
                 </font>
             </Label>
+         <TextField fx:id="searchBar" layoutX="1071.0" layoutY="24.0" maxWidth="200.0" onKeyTyped="#searchSong" prefWidth="200.0" AnchorPane.rightAnchor="15.0" />
+         <Label layoutX="968.0" layoutY="28.0" text="Tìm kiếm">
+            <font>
+               <Font name="System Bold" size="18.0" />
+            </font>
+         </Label>
         </AnchorPane>
     </bottom>
 </BorderPane>

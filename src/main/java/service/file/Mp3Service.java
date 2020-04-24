@@ -3,24 +3,24 @@ package main.java.service.file;/*
  * @author Duc on 4/19/2020
  */
 
-import main.java.model.Song;
-import main.java.service.song.ArrayListManager;
-import main.java.service.song.SongManager;
+import main.java.model.SongDao;
+import main.java.service.dao.SongDaoManager;
+import main.java.service.dao.SongDaoManagerImp;
 import java.io.*;
 import java.util.HashMap;
 
 //Template Pattern
 public abstract class Mp3Service implements FileService {
     @Override
-    public final void importSong(File file, SongManager songManager) {
-        Song song = parseSong(file);
-        if (!songManager.getSongList().contains(song)) {
-            songManager.addSong(song);
+    public final void importSong(File file, SongDaoManager songManager) {
+        SongDao song = parseSong(file);
+        if (!songManager.getSongDaoList().contains(song)) {
+            songManager.addSongDao(song);
         }
     }
 
     @Override
-    public final void saveList(File file, SongManager songManager) {
+    public final void saveList(File file, SongDaoManager songManager) {
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -39,21 +39,21 @@ public abstract class Mp3Service implements FileService {
     }
 
     @Override
-    public final SongManager readList(File file) {
+    public final SongDaoManager readList(File file) {
         InputStream inputStream;
-        SongManager manager;
+        SongDaoManager manager;
         try {
             inputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            manager = (SongManager) objectInputStream.readObject();
+            manager = (SongDaoManager) objectInputStream.readObject();
             inputStream.close();
         } catch (IOException | ClassNotFoundException e) {
-            manager = new ArrayListManager();
+            manager = new SongDaoManagerImp();
         }
         return manager;
     }
 
     public abstract void setMedata(File file, HashMap<String, String> propertyMap);
 
-    public abstract Song parseSong(File file);
+    public abstract SongDao parseSong(File file);
 }

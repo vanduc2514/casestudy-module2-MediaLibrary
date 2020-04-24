@@ -94,12 +94,12 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <TextField fx:id="artist" onKeyTyped="#setFieldStatus" prefHeight="35.0" prefWidth="338.0" text="Đây là ca sỹ" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="110.0">
+      <TextField fx:id="artistDao" onKeyTyped="#setFieldStatus" prefHeight="35.0" prefWidth="338.0" text="Đây là ca sỹ" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="110.0">
          <opaqueInsets>
             <Insets left="10.0" />
          </opaqueInsets>
       </TextField>
-      <Label centerShape="false" prefHeight="35.0" prefWidth="116.0" scaleShape="false" text="Album" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="160.0">
+      <Label centerShape="false" prefHeight="35.0" prefWidth="116.0" scaleShape="false" text="AlbumDao" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="160.0">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
@@ -107,7 +107,7 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <TextField fx:id="album" onKeyTyped="#setFieldStatus" prefHeight="35.0" prefWidth="338.0" text="Đây là album" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="160.0">
+      <TextField fx:id="albumDao" onKeyTyped="#setFieldStatus" prefHeight="35.0" prefWidth="338.0" text="Đây là albumDao" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="160.0">
          <opaqueInsets>
             <Insets left="10.0" />
          </opaqueInsets>
@@ -133,7 +133,7 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <TextField fx:id="genre" onKeyTyped="#setFieldStatus" prefHeight="35.0" prefWidth="338.0" text="Đây là thể loại" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="260.0">
+      <TextField fx:id="genreDao" onKeyTyped="#setFieldStatus" prefHeight="35.0" prefWidth="338.0" text="Đây là thể loại" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="260.0">
          <opaqueInsets>
             <Insets left="10.0" />
          </opaqueInsets>
