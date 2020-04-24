@@ -5,15 +5,15 @@ package main.java.service.song;/*
 
 import main.java.model.Song;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 //Concrete Class
-public class LinkedListManager implements SongManager {
-    private LinkedList<Song> songList;
+public class ArrayListManager implements SongManager {
+    private List<Song> songList;
 
-    public LinkedListManager() {
-        songList = new LinkedList<>();
+    public ArrayListManager() {
+        songList = new ArrayList<>();
     }
 
     @Override

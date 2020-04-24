@@ -5,19 +5,17 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="180.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.resources.controllers.AlertStage">
-   <children>
-      <Label fx:id="message" alignment="CENTER" text="Message" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="20.0">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font>
-      </Label>
-      <Label fx:id="detail" alignment="CENTER" layoutX="133.0" layoutY="54.0" prefHeight="55.0" prefWidth="270.0" text="Information" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="54.0">
-         <font>
-            <Font size="16.0" />
-         </font>
-      </Label>
-      <Button fx:id="okButton" onAction="#closeStage" layoutX="118.0" layoutY="121.0" mnemonicParsing="false" text="OK" AnchorPane.leftAnchor="110.0" AnchorPane.rightAnchor="110.0" />
-   </children>
+   <Label fx:id="message" alignment="CENTER" text="Message" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="20.0">
+      <font>
+         <Font name="System Bold" size="20.0" />
+      </font>
+   </Label>
+   <Label fx:id="detail" alignment="CENTER" layoutX="133.0" layoutY="54.0" prefHeight="55.0" prefWidth="270.0" text="Information" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="54.0">
+      <font>
+         <Font size="16.0" />
+      </font>
+   </Label>
+   <Button fx:id="okButton" layoutX="170.0" layoutY="121.0" mnemonicParsing="false" onAction="#handleButton" prefWidth="50.0" text="OK" AnchorPane.rightAnchor="50.0" />
+   <Button fx:id="cancelButton" layoutX="50.0" layoutY="121.0" mnemonicParsing="false" onAction="#closeStage" text="Huỷ" AnchorPane.leftAnchor="50.0" />
 </AnchorPane>

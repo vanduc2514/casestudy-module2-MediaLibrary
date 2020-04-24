@@ -4,7 +4,7 @@ package main.java.service.file;/*
  */
 
 import main.java.model.Song;
-import main.java.service.song.LinkedListManager;
+import main.java.service.song.ArrayListManager;
 import main.java.service.song.SongManager;
 import java.io.*;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ public abstract class Mp3Service implements FileService {
             manager = (SongManager) objectInputStream.readObject();
             inputStream.close();
         } catch (IOException | ClassNotFoundException e) {
-            manager = new LinkedListManager();
+            manager = new ArrayListManager();
         }
         return manager;
     }

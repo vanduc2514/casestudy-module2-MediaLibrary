@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import java.util.HashMap;
@@ -36,6 +37,10 @@ public class DetailStage {
     public Label sampleRate;
     @FXML
     public Button okButton;
+    @FXML
+    public ImageView albumArt;
+    @FXML
+    public Label filePath;
 
     @FXML
     public void closeStage(ActionEvent actionEvent) {

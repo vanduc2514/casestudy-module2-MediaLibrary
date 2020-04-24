@@ -6,6 +6,7 @@ package main.resources.controllers;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,6 +25,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import main.java.model.Song;
 import main.java.service.facade.FacadeUtil;
@@ -119,6 +121,12 @@ public class MainStage implements Initializable {
             toDisplay = facadeUtil.createNewList();
         } finally {
             displayList = FXCollections.observableList(toDisplay);
+            displayList.addListener(new ListChangeListener<Song>() {
+                @Override
+                public void onChanged(Change<? extends Song> c) {
+                    System.out.println(displayList);
+                }
+            });
             configTable();
             sorter = new SorterUseComparator(displayList);
         }
@@ -126,6 +134,12 @@ public class MainStage implements Initializable {
 
     @FXML
     public void createNewLibrary(ActionEvent actionEvent) {
+//        if (toDisplay.size() > 0) {
+//            AlertStage alertStage = getAlertStage("Thư viện cũ sẽ bị xoá vĩnh viễn", "Bạn có chắc chắn ?");
+//            if (!alertStage.confirm) {
+//                return;
+//            }
+//        }
         stage = new Stage();
         fxmlLoader = new FXMLLoader(getClass().getResource("../view/MessageStage.fxml"));
         try {
@@ -134,6 +148,7 @@ public class MainStage implements Initializable {
             messageStage.message.setText("Nhập tên của thư viện");
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.initStyle(StageStyle.UTILITY);
             stage.showAndWait();
             if (messageStage.isOkButtonPressed) {
                 libraryName.setText(libraryName.getText().replace("Admin", messageStage.userInput.getText()));
@@ -146,9 +161,12 @@ public class MainStage implements Initializable {
 
     @FXML
     public void deleteLibrary() {
-        toDisplay = facadeUtil.createNewList();
-        displayList = FXCollections.observableList(toDisplay);
-        songTable.setItems(displayList);
+        AlertStage alertStage = getAlertStage("Thư viện cũ sẽ bị xoá vĩnh viễn", "Bạn có chắc chắn ?");
+        assert alertStage != null;
+        if (alertStage.confirm) {
+            toDisplay = facadeUtil.createNewList();
+            songTable.getItems().clear();
+        }
     }
 
     @FXML
@@ -162,14 +180,13 @@ public class MainStage implements Initializable {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        displayList = FXCollections.observableList(toDisplay);
-        if (order.getSelectedToggle() == ascendingOrder) {
-            ascendingSort();
-        } else if (order.getSelectedToggle() == descendingOrder) {
-            descendingSort();
-        }
+        displayList.setAll(toDisplay);
+//        if (order.getSelectedToggle() == ascendingOrder) {
+//            ascendingSort();
+//        } else if (order.getSelectedToggle() == descendingOrder) {
+//            descendingSort();
+//        }
         songTable.setItems(displayList);
-
     }
 
     @FXML
@@ -207,10 +224,14 @@ public class MainStage implements Initializable {
 
     @FXML
     public void removeSong() {
-        ObservableList<Song> selected;
-        selected = songTable.getSelectionModel().getSelectedItems();
-        facadeUtil.removeSong(selected.get(0));
-        songTable.refresh();
+        AlertStage alertStage = getAlertStage("Bài hát sẽ bị xoá vĩnh viễn", "Bạn có chắc chắn ?");
+        assert alertStage != null;
+        if (alertStage.confirm) {
+            ObservableList<Song> selected;
+            selected = songTable.getSelectionModel().getSelectedItems();
+            facadeUtil.removeSong(selected.get(0));
+            songTable.refresh();
+        }
     }
 
     @FXML
@@ -225,6 +246,7 @@ public class MainStage implements Initializable {
             DetailStage detailStage = fxmlLoader.getController();
             setSongDetail(selectedSong, detailStage);
             stage.setScene(scene);
+            stage.initStyle(StageStyle.UTILITY);
             stage.showAndWait();
             if (detailStage.isFieldEdited) {
                 facadeUtil.editInfo(selectedSong, detailStage.propertyMap);
@@ -316,7 +338,6 @@ public class MainStage implements Initializable {
             sorter.sortByComposerNatural();
         } else if (order.getSelectedToggle() == descendingOrder)
             sorter.sortByComposerReverse();
-
     }
 
     @FXML
@@ -364,7 +385,6 @@ public class MainStage implements Initializable {
         } else if (sortBy.getSelectedToggle() == yearSort) {
             sorter.sortByYearReverse();
         } else sorter.sortByDurationReverse();
-
     }
 
     @FXML
@@ -384,6 +404,11 @@ public class MainStage implements Initializable {
         detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
         detailStage.bitrate.setText(selectedSong.getBitrate() + " kbps");
         detailStage.sampleRate.setText(selectedSong.getSampleRate() + " Khz");
+        detailStage.filePath.setText(selectedSong.getPath());
+        Image albumArt = facadeUtil.getAlbumArt(selectedSong);
+        Rectangle2D rectangle2D = new Rectangle2D(0, 0, albumArt.getWidth(), albumArt.getHeight());
+        detailStage.albumArt.setViewport(rectangle2D);
+        detailStage.albumArt.setImage(albumArt);
     }
 
     private void configTable() {
@@ -412,5 +437,24 @@ public class MainStage implements Initializable {
         bitRateColumn.setCellValueFactory(new PropertyValueFactory<>("bitrate"));
         durationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
         songTable.setItems(displayList);
+    }
+
+    private AlertStage getAlertStage(String message, String detail) {
+        fxmlLoader = new FXMLLoader(getClass().getResource("../view/AlertStage.fxml"));
+        stage = new Stage();
+        try {
+            root = fxmlLoader.load();
+            AlertStage alertStage = fxmlLoader.getController();
+            alertStage.message.setText(message);
+            alertStage.detail.setText(detail);
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.initStyle(StageStyle.UTILITY);
+            stage.showAndWait();
+            return alertStage;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

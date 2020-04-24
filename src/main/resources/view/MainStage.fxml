@@ -128,11 +128,9 @@
             <Pane prefHeight="422.0" prefWidth="200.0">
                 <ImageView fx:id="albumArt" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                     <viewport>
-                        <Rectangle2D height="500.0" width="500.0" />
+                        <Rectangle2D height="500.0" width="500.0"/>
                     </viewport>
-               <image>
-                  <Image url="@../images/default_album_cover.png" />
-               </image>
+                    <Image url="@../images/default_album_cover.png"/>
                 </ImageView>
                 <Label fx:id="titleLabel" alignment="CENTER" layoutX="10.0" layoutY="211.0" prefHeight="50.0" prefWidth="180.0" text="Tên Bài Hát" textAlignment="CENTER" visible="false" wrapText="true" />
                 <Label fx:id="artistLabel" alignment="CENTER" layoutX="10.0" layoutY="256.0" prefHeight="50.0" prefWidth="180.0" text="Tên Ca sỹ" textAlignment="CENTER" visible="false" wrapText="true" />

@@ -8,7 +8,7 @@ import main.java.model.Song;
 import main.java.service.file.FileService;
 import main.java.service.file.FileServiceAdapter;
 import main.java.service.file.Mp3MagicService;
-import main.java.service.song.LinkedListManager;
+import main.java.service.song.ArrayListManager;
 import main.java.service.song.SongManager;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +32,7 @@ public class LibraryUtil implements FacadeUtil {
     public static LibraryUtil getInstance() {
         if (manager == null) {
             manager = new LibraryUtil();
-            songManager = new LinkedListManager();
+            songManager = new ArrayListManager();
             fileService = new Mp3MagicService();
         }
         return manager;
@@ -40,7 +40,7 @@ public class LibraryUtil implements FacadeUtil {
 
     @Override
     public List<Song> createNewList() {
-        songManager = new LinkedListManager();
+        songManager = new ArrayListManager();
         return songManager.getSongList();
     }
 
