@@ -252,20 +252,19 @@ public class MainStage implements Initializable {
 
     @FXML
     public void showSongDetail() {
-        ObservableList<SongDao> selected = songTable.getSelectionModel().getSelectedItems();
-        SongDao selectedSongDao = selected.get(0);
+        SongDao selectedSong = songTable.getSelectionModel().getSelectedItem();
         fxmlLoader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
         stage = new Stage();
         try {
             root = fxmlLoader.load();
             scene = new Scene(root);
             DetailStage detailStage = fxmlLoader.getController();
-            setSongDaoDetail(selectedSongDao, detailStage);
+            setSongDetail(selectedSong, detailStage);
             stage.setScene(scene);
             stage.initStyle(StageStyle.UTILITY);
             stage.showAndWait();
             if (detailStage.isFieldEdited) {
-                facadeUtil.editInfo(selectedSongDao, detailStage.propertyMap);
+                facadeUtil.editInfo(selectedSong, detailStage.propertyMap);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -464,19 +463,19 @@ public class MainStage implements Initializable {
         Platform.exit();
     }
 
-    private void setSongDaoDetail(SongDao selectedSongDao, DetailStage detailStage) {
-        detailStage.track.setText(String.valueOf(selectedSongDao.getTrackNumber()));
-        detailStage.title.setText(selectedSongDao.getTitle());
-        detailStage.artist.setText(selectedSongDao.getArtistDao().getTitle());
-        detailStage.album.setText(selectedSongDao.getAlbumDao().getTitle());
-        detailStage.composer.setText(selectedSongDao.getComposer());
-        detailStage.genre.setText(selectedSongDao.getGenreDao().getTitle());
-        detailStage.year.setText(String.valueOf(selectedSongDao.getYear()));
-        detailStage.duration.setText(selectedSongDao.getDuration().toMinutes() + ":" + selectedSongDao.getDuration().minusMinutes(selectedSongDao.getDuration().toMinutes()).getSeconds());
-        detailStage.bitrate.setText(selectedSongDao.getBitrate() + " kbps");
-        detailStage.sampleRate.setText(selectedSongDao.getSampleRate() + " Khz");
-        detailStage.filePath.setText(selectedSongDao.getPath());
-        Image albumArt = facadeUtil.getAlbumArt(selectedSongDao);
+    private void setSongDetail(SongDao selectedSong, DetailStage detailStage) {
+        detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
+        detailStage.title.setText(selectedSong.getTitle());
+        detailStage.artist.setText(selectedSong.getArtistDao().getTitle());
+        detailStage.album.setText(selectedSong.getAlbumDao().getTitle());
+        detailStage.composer.setText(selectedSong.getComposer());
+        detailStage.genre.setText(selectedSong.getGenreDao().getTitle());
+        detailStage.year.setText(String.valueOf(selectedSong.getYear()));
+        detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
+        detailStage.bitrate.setText(selectedSong.getBitrate() + " kbps");
+        detailStage.sampleRate.setText(selectedSong.getSampleRate() + " Khz");
+        detailStage.filePath.setText(selectedSong.getPath());
+        Image albumArt = facadeUtil.getAlbumArt(selectedSong);
         Rectangle2D rectangle2D = new Rectangle2D(0, 0, albumArt.getWidth(), albumArt.getHeight());
         detailStage.albumArt.setViewport(rectangle2D);
         detailStage.albumArt.setImage(albumArt);
