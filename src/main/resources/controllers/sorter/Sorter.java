@@ -3,10 +3,6 @@ package main.resources.controllers.sorter;/*
  * @author Duc on 4/24/2020
  */
 
-import main.java.model.Song;
-
-import java.util.Comparator;
-
 //Strategy Pattern
 public interface Sorter {
     void sortByTrackNatural();

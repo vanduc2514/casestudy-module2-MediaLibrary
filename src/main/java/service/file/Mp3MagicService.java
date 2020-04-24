@@ -1,59 +1,103 @@
 package main.java.service.file;/*
  * @project caseStudy-module2-MediaLibrary
- * @author Duc on 4/22/2020
+ * @author Duc on 4/25/2020
  */
 
 import com.mpatric.mp3agic.*;
-import main.java.model.Song;
+import main.java.model.*;
 
 import java.io.*;
 import java.net.URLConnection;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-//Concrete Class
-public class Mp3MagicService {
-    public Song parseSong(File file) {
-        Song song = new Song();
-        Mp3File mp3File;
+public class Mp3MagicService extends Mp3Service {
+    private List<SongData> artistDaoList;
+    private List<SongData> albumDaoList;
+    private List<SongData> genreDaoList;
+
+    public Mp3MagicService() {
+        artistDaoList = new ArrayList<>();
+        albumDaoList = new ArrayList<>();
+        genreDaoList = new ArrayList<>();
+    }
+
+    public List<SongData> getAlbumDaoList() {
+        return albumDaoList;
+    }
+
+    public List<SongData> getArtistDaoList() {
+        return artistDaoList;
+    }
+
+    public List<SongData> getGenreDaoList() {
+        return genreDaoList;
+    }
+
+    @Override
+    public SongDao parseSong(File file) {
+        SongDao songDao = new SongDao();
         try {
-            mp3File = new Mp3File(file);
-            ID3v2 id3v2Tag = mp3File.getId3v2Tag();
-            if (id3v2Tag.getTrack() != null) {
-                song.setTrackNumber(id3v2Tag.getTrack());
+            Mp3File mp3File = new Mp3File(file);
+            ID3v2 id3v2 = mp3File.getId3v2Tag();
+            if (id3v2.getTrack() != null) {
+                songDao.setTrackNumber(id3v2.getTrack());
             }
-            if (id3v2Tag.getTitle() != null) {
-                song.setTitle(id3v2Tag.getTitle());
+            if (id3v2.getTitle() != null) {
+                songDao.setTitle(id3v2.getTitle());
             }
-            if (id3v2Tag.getArtist() != null) {
-                song.setArtist(id3v2Tag.getArtist());
+            if (id3v2.getArtist() != null) {
+                SongData artistDao = new ArtistDao(id3v2.getArtist());
+                if (!artistDaoList.contains(artistDao)) {
+                    artistDaoList.add(artistDao);
+                } else {
+                    artistDao = artistDaoList.get(artistDaoList.indexOf(artistDao));
+                }
+                songDao.setArtistDao(artistDao);
+                artistDao.getSongDaoList().add(songDao);
             }
-            if (id3v2Tag.getAlbum() != null) {
-                song.setAlbum(id3v2Tag.getAlbum());
+            if (id3v2.getAlbum() != null) {
+                SongData albumDao = new AlbumDao(id3v2.getAlbum());
+                if (!albumDaoList.contains(albumDao)) {
+                    albumDaoList.add(albumDao);
+                } else {
+                    albumDao = albumDaoList.get(albumDaoList.indexOf(albumDao));
+                }
+                songDao.setAlbumDao(albumDao);
+                albumDao.getSongDaoList().add(songDao);
             }
-            if (id3v2Tag.getGenreDescription() != null) {
-                song.setGenre(id3v2Tag.getGenreDescription());
+            if (id3v2.getGenreDescription() != null) {
+                SongData genreDao = new GenreDao(id3v2.getGenreDescription());
+                if (!genreDaoList.contains(genreDao)) {
+                    genreDaoList.add(genreDao);
+                } else {
+                    genreDao = genreDaoList.get(genreDaoList.indexOf(genreDao));
+                }
+                songDao.setGenreDao(genreDao);
+                genreDao.getSongDaoList().add(songDao);
             }
-            if (id3v2Tag.getComposer() != null) {
-                song.setComposer(id3v2Tag.getComposer());
+            if (id3v2.getComposer() != null) {
+                songDao.setComposer(id3v2.getComposer());
             }
-            if (id3v2Tag.getYear() != null) {
-                song.setYear(Integer.parseInt(id3v2Tag.getYear()));
+            if (id3v2.getYear() != null) {
+                songDao.setYear(Integer.parseInt(id3v2.getYear()));
             }
-            if (id3v2Tag.getAlbumImage() != null) {
-                song.setAlbumArt(id3v2Tag.getAlbumImage());
+            if (id3v2.getAlbumImage() != null) {
+                songDao.setAlbumArt(id3v2.getAlbumImage());
             }
-            song.setDuration(Duration.ofMillis(mp3File.getLengthInMilliseconds()));
-            song.setBitrate(mp3File.getBitrate());
-            song.setSampleRate(mp3File.getSampleRate());
-            song.setPath(file.getAbsolutePath());
-            return song;
+            songDao.setDuration(Duration.ofMillis(mp3File.getLengthInMilliseconds()));
+            songDao.setBitrate(mp3File.getBitrate());
+            songDao.setSampleRate(mp3File.getSampleRate());
+            songDao.setPath(file.getAbsolutePath());
         } catch (IOException | UnsupportedTagException | InvalidDataException e) {
             e.printStackTrace();
         }
-        return song;
+        return songDao;
     }
 
+    @Override
     public void setMedata(File file, HashMap<String, String> propertyMap) {
         Mp3File mp3File = null;
         try {

@@ -4,7 +4,6 @@ package main.java.service.facade;/*
  */
 
 import javafx.scene.image.Image;
-import main.java.model.Song;
 import main.java.model.SongDao;
 
 import java.io.File;

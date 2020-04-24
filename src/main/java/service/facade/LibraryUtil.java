@@ -9,7 +9,7 @@ import main.java.service.dao.SongDaoManager;
 import main.java.service.dao.SongDaoManagerImp;
 import main.java.service.file.FileService;
 import main.java.service.file.FileUtil;
-import main.java.service.file.NewMp3MagicService;
+import main.java.service.file.Mp3MagicService;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -32,24 +32,24 @@ public class LibraryUtil implements FacadeUtil {
         if (manager == null) {
             manager = new LibraryUtil();
             songManager = new SongDaoManagerImp();
-            fileService = new NewMp3MagicService();
+            fileService = new Mp3MagicService();
         }
         return manager;
     }
 
     public List<SongData> getArtistDaoList() {
-        NewMp3MagicService service = (NewMp3MagicService) fileService;
+        Mp3MagicService service = (Mp3MagicService) fileService;
         return service.getArtistDaoList();
     }
 
     public List<SongData> getAlbumDaoList() {
-        NewMp3MagicService service = (NewMp3MagicService) fileService;
+        Mp3MagicService service = (Mp3MagicService) fileService;
         return service.getAlbumDaoList();
 
     }
 
     public List<SongData> getGenreDaoList() {
-        NewMp3MagicService service = (NewMp3MagicService) fileService;
+        Mp3MagicService service = (Mp3MagicService) fileService;
         return service.getGenreDaoList();
     }
 
