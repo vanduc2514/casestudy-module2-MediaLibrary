@@ -13,12 +13,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -228,12 +226,17 @@ public class MainStage implements Initializable {
     public void handleContextMenuTableView(ContextMenuEvent contextMenuEvent) {
         if (contextMenuEvent.getSource() == songTable) {
             selectedList = songTable.getSelectionModel().getSelectedItems();
-        } else if (contextMenuEvent.getSource() == filterTable) {
-            System.out.println(contextMenuEvent.getSource());
+            if (selectedList.isEmpty()) {
+                songTable.getContextMenu().hide();
+            }
+        } else {
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
+            selectedList = selectedContent.getSelectionModel().getSelectedItems();
+            if (selectedList.isEmpty()) {
+                selectedContent.getContextMenu().hide();
+            }
         }
-//        if (selectedList.isEmpty()) {
-//            songTable.getContextMenu().hide();
-//        }
     }
 
     @FXML
@@ -423,71 +426,15 @@ public class MainStage implements Initializable {
     }
 
     @FXML
-    public void sortByTrack() {
+    public void sortItem() {
         if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByTrackNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByTrackReverse();
+            ascendingSort();
+        }
+        if (order.getSelectedToggle() == descendingOrder) {
+            descendingSort();
+        }
     }
 
-    @FXML
-    public void sortByTitle() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByTitleNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByTitleNatural();
-    }
-
-    @FXML
-    public void sortByArtist() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByArtistNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByArtistReverse();
-    }
-
-    @FXML
-    public void sortByAlbum() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByAlbumNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByAlbumReverse();
-    }
-
-    @FXML
-    public void sortByGenre() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByGenreNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByGenreReverse();
-    }
-
-    @FXML
-    public void sortByYear() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByYearNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByYearReverse();
-    }
-
-    @FXML
-    public void sortByComposer() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByComposerNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByComposerReverse();
-    }
-
-    @FXML
-    public void sortByDuration() {
-        if (order.getSelectedToggle() == ascendingOrder) {
-            sorter.sortByDurationNatural();
-        } else if (order.getSelectedToggle() == descendingOrder)
-            sorter.sortByDurationReverse();
-    }
-
-
-    @FXML
     public void ascendingSort() {
         if (sortBy.getSelectedToggle() == trackSort) {
             sorter.sortByTrackNatural();
@@ -506,7 +453,6 @@ public class MainStage implements Initializable {
         } else sorter.sortByDurationNatural();
     }
 
-    @FXML
     public void descendingSort() {
         if (sortBy.getSelectedToggle() == trackSort) {
             sorter.sortByTrackReverse();

@@ -54,24 +54,24 @@
                 <MenuItem mnemonicParsing="false" text="Xem theo thể loại" />
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <Menu mnemonicParsing="false" text="Sắp xếp">
-                    <RadioMenuItem fx:id="trackSort" mnemonicParsing="false" onAction="#sortByTrack" selected="true" text="Sắp xếp theo Track">
+                    <RadioMenuItem fx:id="trackSort" mnemonicParsing="false" onAction="#sortItem" selected="true" text="Sắp xếp theo Track">
                         <toggleGroup>
                             <ToggleGroup fx:id="sortBy" />
                         </toggleGroup>
                     </RadioMenuItem>
-                    <RadioMenuItem fx:id="titleSort" mnemonicParsing="false" onAction="#sortByTitle" text="Sắp xếp theo Bài hát" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="artistSort" mnemonicParsing="false" onAction="#sortByArtist" text="Sắp xếp theo Ca sỹ" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="albumSort" mnemonicParsing="false" onAction="#sortByAlbum" text="Sắp xếp theo Album" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="genreSort" mnemonicParsing="false" onAction="#sortByGenre" text="Sắp xếp theo Thể loại" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="composerSort" mnemonicParsing="false" onAction="#sortByComposer" text="Sắp xếp theo Soạn nhạc" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="yearSort" mnemonicParsing="false" onAction="#sortByYear" text="Sắp xếp theo Năm" toggleGroup="$sortBy" />
-                    <RadioMenuItem fx:id="durationSort" mnemonicParsing="false" onAction="#sortByDuration" text="Sắp xếp theo Thời lượng" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="titleSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Bài hát" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="artistSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Ca sỹ" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="albumSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Album" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="genreSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Thể loại" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="composerSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Soạn nhạc" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="yearSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Năm" toggleGroup="$sortBy" />
+                    <RadioMenuItem fx:id="durationSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Thời lượng" toggleGroup="$sortBy" />
                     <SeparatorMenuItem mnemonicParsing="false" />
-                    <RadioMenuItem fx:id="ascendingOrder" mnemonicParsing="false" onAction="#ascendingSort" text="Tăng dần">
+                    <RadioMenuItem fx:id="ascendingOrder" mnemonicParsing="false" onAction="#sortItem" text="Tăng dần">
                   <toggleGroup>
                             <ToggleGroup fx:id="order" />
                   </toggleGroup></RadioMenuItem>
-                    <RadioMenuItem fx:id="descendingOrder" mnemonicParsing="false" onAction="#descendingSort" selected="true" text="Giảm dần" toggleGroup="$order" />
+                    <RadioMenuItem fx:id="descendingOrder" mnemonicParsing="false" onAction="#sortItem" selected="true" text="Giảm dần" toggleGroup="$order" />
                 </Menu>
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#showSongDetail" text="Xem chi tiết bài hát" />
