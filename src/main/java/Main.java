@@ -11,6 +11,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import main.resources.controllers.MainStage;
+
+import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -24,6 +26,8 @@ public class Main extends Application {
         Parent root;
         try {
             root = loader.load();
+            File file = new File("src/main/resources/css/style.css");
+            root.getStylesheets().add(file.toURI().toString());
             MainStage controller = loader.getController();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);

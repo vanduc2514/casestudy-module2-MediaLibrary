@@ -1,0 +1,34 @@
+.table-view {
+    -fx-focus-color: transparent;
+}
+
+.table-track {
+    -fx-alignment: CENTER;
+}
+
+.table-title {
+}
+
+.table-artist {
+    -fx-alignment: CENTER;
+}
+
+.table-album {
+    -fx-alignment: CENTER;
+}
+
+.table-composer {
+    -fx-alignment: CENTER;
+}
+
+.table-genre {
+    -fx-alignment: CENTER;
+}
+
+.table-duration {
+    -fx-alignment: CENTER;
+}
+
+.table-bitrate {
+    -fx-alignment: CENTER;
+}

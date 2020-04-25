@@ -81,16 +81,16 @@
         </MenuBar>
     </top>
     <center>
-        <TableView fx:id="songTable" blendMode="MULTIPLY" cache="true" onContextMenuRequested="#handleContextMenuTableView" BorderPane.alignment="CENTER">
+        <TableView fx:id="songTable" blendMode="MULTIPLY" cache="true" onContextMenuRequested="#handleContextMenuTableView" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="trackColumn" prefWidth="66.0" text="Track" />
-                <TableColumn fx:id="titleColumn" editable="false" minWidth="270.0" prefWidth="337.0" text="Tựa đề" />
-                <TableColumn fx:id="artistColumn" minWidth="0.0" prefWidth="108.0" text="Ca sỹ" />
-                <TableColumn fx:id="albumColumn" prefWidth="200.0" text="Album" />
-                <TableColumn fx:id="creatorColumn" prefWidth="120.0" text="Tác giả" />
-                <TableColumn fx:id="genreColumn" prefWidth="115.0" text="Thể loại" />
-                <TableColumn fx:id="durationColumn" prefWidth="88.0" text="Thời lượng" />
-                <TableColumn fx:id="bitRateColumn" prefWidth="111.0" text="Bitrate" />
+                <TableColumn fx:id="trackColumn" maxWidth="2500.0" prefWidth="66.0" styleClass="table-track" text="Track" />
+                <TableColumn fx:id="titleColumn" editable="false" maxWidth="3000.0" minWidth="270.0" prefWidth="350.0" styleClass="table-title" text="Tựa đề" />
+                <TableColumn fx:id="artistColumn" maxWidth="9000.0" minWidth="0.0" prefWidth="100.0" styleClass="table-artist" text="Ca sỹ" />
+                <TableColumn fx:id="albumColumn" maxWidth="9000.0" prefWidth="200.0" styleClass="table-album" text="Album" />
+                <TableColumn fx:id="creatorColumn" maxWidth="9000.0" prefWidth="120.0" styleClass="table-composer" text="Tác giả" />
+                <TableColumn fx:id="genreColumn" maxWidth="6000.0" prefWidth="115.0" styleClass="table-genre" text="Thể loại" />
+                <TableColumn fx:id="durationColumn" styleClass="table-duration" text="Thời lượng" />
+                <TableColumn fx:id="bitRateColumn" styleClass="table-bitrate" text="Bitrate" />
             </columns>
             <contextMenu>
                 <ContextMenu fx:id="contextMenu">

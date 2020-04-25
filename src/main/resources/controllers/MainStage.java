@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -142,7 +143,7 @@ public class MainStage implements Initializable {
             toDisplay = facadeUtil.createNewList();
         } finally {
             displayList = FXCollections.observableList(toDisplay);
-            configTable();
+            configTableView();
             sorter = new SorterUseComparator(displayList);
         }
     }
@@ -390,10 +391,19 @@ public class MainStage implements Initializable {
             ObservableList<SongDao> filterList = FXCollections.observableList(data.getSongDaoList());
             tab = new Tab(data.getTitle());
             filterTable = new TableView<>();
-            TableColumn<SongDao, String> tableColumn = new TableColumn<>("Tựa đề");
-            tableColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-            filterTable.getColumns().add(tableColumn);
-            filterTable.setItems(filterList);
+            TableColumn<SongDao, String> filterTitleColumn = new TableColumn<>("Tựa đề");
+            TableColumn<SongDao, Duration> filterDurationColumn = new TableColumn<>("Thời Lượng");
+            TableColumn<SongDao, Integer> filterBitrateColumn = new TableColumn<>("Bitrate");
+            filterTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+            filterTitleColumn.getStyleClass().add("table-title");
+            filterTitleColumn.setMaxWidth(35000);
+            filterDurationColumn.setCellValueFactory(new PropertyValueFactory<>("duration"));
+            filterDurationColumn.getStyleClass().add("table-duration");
+            filterDurationColumn.setMaxWidth(5000);
+            filterBitrateColumn.setCellValueFactory(new PropertyValueFactory<>("bitrate"));
+            filterBitrateColumn.setId("filter-bitrate");
+            filterBitrateColumn.setMaxWidth(5000);
+            filterTable.getColumns().addAll(filterTitleColumn, filterDurationColumn, filterBitrateColumn);
             filterTable.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
                 public void handle(ContextMenuEvent event) {
@@ -415,6 +425,42 @@ public class MainStage implements Initializable {
                     return row;
                 }
             });
+            filterDurationColumn.setCellFactory(new Callback<TableColumn<SongDao, Duration>, TableCell<SongDao, Duration>>() {
+                @Override
+                public TableCell<SongDao, Duration> call(TableColumn<SongDao, Duration> param) {
+                    return new TableCell<SongDao, Duration>() {
+                        @Override
+                        protected void updateItem(Duration item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty) {
+                                setText(null);
+                            } else {
+                                setText(item.toMinutes() + ":" + item.minusMinutes(item.toMinutes()).getSeconds());
+                            }
+                        }
+                    };
+                }
+            });
+            filterBitrateColumn.setCellFactory(new Callback<TableColumn<SongDao, Integer>, TableCell<SongDao, Integer>>() {
+                @Override
+                public TableCell<SongDao, Integer> call(TableColumn<SongDao, Integer> param) {
+                    return new TableCell<SongDao, Integer>() {
+                        @Override
+                        protected void updateItem(Integer item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (empty) {
+                                setText(null);
+                            } else {
+                                setText(item + " kbps");
+                            }
+                        }
+                    };
+                }
+            });
+            filterTable.setEditable(false);
+            filterTable.autosize();
+            filterTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            filterTable.setItems(filterList);
             filterTable.setContextMenu(songTable.getContextMenu());
             tab.setContent(filterTable);
             tabPane.getTabs().add(tab);
@@ -478,7 +524,7 @@ public class MainStage implements Initializable {
         Platform.exit();
     }
 
-    private void configTable() {
+    private void configTableView() {
         trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackNumber"));
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         artistColumn.setCellValueFactory(new PropertyValueFactory<>("artistDao"));
@@ -516,6 +562,22 @@ public class MainStage implements Initializable {
                     }
                 });
                 return row;
+            }
+        });
+        bitRateColumn.setCellFactory(new Callback<TableColumn<SongDao, Integer>, TableCell<SongDao, Integer>>() {
+            @Override
+            public TableCell<SongDao, Integer> call(TableColumn<SongDao, Integer> param) {
+                return new TableCell<SongDao, Integer>() {
+                    @Override
+                    protected void updateItem(Integer item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(item + " kbps");
+                        }
+                    }
+                };
             }
         });
         songTable.setItems(displayList);
