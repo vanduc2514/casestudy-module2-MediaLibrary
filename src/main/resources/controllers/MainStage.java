@@ -182,8 +182,7 @@ public class MainStage implements Initializable {
         assert alertStage != null;
         if (alertStage.confirm) {
             toDisplay = facadeUtil.createNewList();
-            displayList = FXCollections.observableList(toDisplay);
-//            songTable.getItems().clear();
+            songTable.refresh();
             clearSummary();
             return true;
         }
@@ -584,7 +583,6 @@ public class MainStage implements Initializable {
                 };
             }
         });
-        songTable.setItems(displayList);
         FilteredList<SongDao> filteredList = new FilteredList<>(displayList, new Predicate<SongDao>() {
             @Override
             public boolean test(SongDao songDao) {
@@ -605,6 +603,7 @@ public class MainStage implements Initializable {
         SortedList<SongDao> sortedList = new SortedList<>(filteredList);
         sortedList.comparatorProperty().bind(songTable.comparatorProperty());
         songTable.setItems(sortedList);
+        songTable.setItems(displayList);
     }
 
     private AlertStage getAlertStage(String message, String detail) {
