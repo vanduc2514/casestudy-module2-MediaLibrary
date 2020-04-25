@@ -120,13 +120,13 @@
                 <Glow />
             </effect>
             <TilePane />
-            <Button mnemonicParsing="false" onAction="#showSongTable" prefHeight="50.0" prefWidth="200.0" text="Bái hát" />
+            <Button fx:id="songButton" mnemonicParsing="false" onAction="#setBorderPaneCenter" prefHeight="50.0" prefWidth="200.0" text="Bái hát" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" onAction="#showArtistPane" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
+            <Button fx:id="artistButton" mnemonicParsing="false" onAction="#setBorderPaneCenter" prefHeight="50.0" prefWidth="200.0" text="Ca sỹ" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" onAction="#showAlbumPane" prefHeight="50.0" prefWidth="200.0" text="Album" />
+            <Button fx:id="albumButton" mnemonicParsing="false" onAction="#setBorderPaneCenter" prefHeight="50.0" prefWidth="200.0" text="Album" />
             <Separator prefWidth="200.0" />
-            <Button mnemonicParsing="false" onAction="#showGenrePane" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
+            <Button fx:id="genreButton" mnemonicParsing="false" onAction="#setBorderPaneCenter" prefHeight="50.0" prefWidth="200.0" text="Thể loại" />
             <Pane prefHeight="420.0" prefWidth="200.0">
                 <ImageView fx:id="albumArt" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                     <viewport>

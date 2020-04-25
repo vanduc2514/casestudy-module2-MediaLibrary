@@ -16,6 +16,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -63,6 +64,14 @@ public class MainStage implements Initializable {
     public SongDao selectedSong;
     public ObservableList<SongDao> selectedList;
 
+    @FXML
+    public Button songButton;
+    @FXML
+    public Button artistButton;
+    @FXML
+    public Button albumButton;
+    @FXML
+    public Button genreButton;
     @FXML
     public BorderPane borderPane;
     @FXML
@@ -355,35 +364,27 @@ public class MainStage implements Initializable {
     }
 
     @FXML
-    public void showSongTable(ActionEvent actionEvent) {
-        borderPane.setCenter(songTable);
-    }
-
-    @FXML
-    public void showArtistPane(ActionEvent actionEvent) {
+    public void setBorderPaneCenter(ActionEvent actionEvent) {
         LibraryUtil util = (LibraryUtil) facadeUtil;
-        List<SongData> listArtist = util.getArtistDaoList();
-        tabPane = createSongTablePane(listArtist);
-        borderPane.setCenter(tabPane);
+        List<SongData> dataList;
+        if (actionEvent.getSource() == songButton) {
+            borderPane.setCenter(songTable);
+        } else if (actionEvent.getSource() == artistButton) {
+            dataList = util.getArtistDaoList();
+            tabPane = configTabPane(dataList);
+            borderPane.setCenter(tabPane);
+        } else if (actionEvent.getSource() == albumButton) {
+            dataList = util.getAlbumDaoList();
+            tabPane = configTabPane(dataList);
+            borderPane.setCenter(tabPane);
+        } else if (actionEvent.getSource() == genreButton) {
+            dataList = util.getGenreDaoList();
+            tabPane = configTabPane(dataList);
+            borderPane.setCenter(tabPane);
+        }
     }
 
-    @FXML
-    public void showAlbumPane(ActionEvent actionEvent) {
-        LibraryUtil util = (LibraryUtil) facadeUtil;
-        List<SongData> listAlbum = util.getAlbumDaoList();
-        tabPane = createSongTablePane(listAlbum);
-        borderPane.setCenter(tabPane);
-    }
-
-    @FXML
-    public void showGenrePane(ActionEvent actionEvent) {
-        LibraryUtil util = (LibraryUtil) facadeUtil;
-        List<SongData> listGenre = util.getGenreDaoList();
-        tabPane = createSongTablePane(listGenre);
-        borderPane.setCenter(tabPane);
-    }
-
-    private TabPane createSongTablePane(List<SongData> list) {
+    private TabPane configTabPane(List<SongData> list) {
         tabPane = new TabPane();
         for (SongData data : list) {
             ObservableList<SongDao> filterList = FXCollections.observableList(data.getSongDaoList());
