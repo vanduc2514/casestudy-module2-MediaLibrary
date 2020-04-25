@@ -56,7 +56,7 @@
          <viewport>
             <Rectangle2D height="500.0" width="500.0" />
          </viewport>
-         <Image url="@../images/default_album_cover.png" />
+         <Image url="@../images/default-album-cover.png" />
       </ImageView>
    </AnchorPane>
    <AnchorPane prefHeight="558.0" prefWidth="484.0">

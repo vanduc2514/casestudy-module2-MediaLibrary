@@ -34,7 +34,7 @@
 }
 
 .search-bar {
-    -fx-background-image:url('http://icons.iconarchive.com/icons/rockettheme/halloween/32/pumpkin-icon.png');
+    -fx-background-image:url('../images/lookup-icon.png');
     -fx-background-repeat: no-repeat;
     -fx-background-position: right center;
 }

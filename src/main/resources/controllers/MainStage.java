@@ -28,6 +28,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -67,6 +68,8 @@ public class MainStage implements Initializable {
     public SongDao selectedSong;
 
     @FXML
+    public VBox vBoxLeft;
+    @FXML
     public Button songButton;
     @FXML
     public Button artistButton;
@@ -76,6 +79,8 @@ public class MainStage implements Initializable {
     public Button genreButton;
     @FXML
     public BorderPane borderPane;
+    @FXML
+    public Label searchLabel;
     @FXML
     public TextField searchBar;
     @FXML
@@ -410,23 +415,27 @@ public class MainStage implements Initializable {
     }
 
     @FXML
-    public void setBorderPaneCenter(ActionEvent actionEvent) {
+    public void handleButton(ActionEvent actionEvent) {
         LibraryUtil util = (LibraryUtil) facadeUtil;
         List<SongData> dataList;
         if (actionEvent.getSource() == songButton) {
             borderPane.setCenter(songTable);
+            searchBar.setDisable(false);
         } else if (actionEvent.getSource() == artistButton) {
             dataList = util.getArtistDaoList();
             tabPane = configTabPane(dataList);
             borderPane.setCenter(tabPane);
+            searchBar.setDisable(true);
         } else if (actionEvent.getSource() == albumButton) {
             dataList = util.getAlbumDaoList();
             tabPane = configTabPane(dataList);
             borderPane.setCenter(tabPane);
+            searchBar.setDisable(true);
         } else if (actionEvent.getSource() == genreButton) {
             dataList = util.getGenreDaoList();
             tabPane = configTabPane(dataList);
             borderPane.setCenter(tabPane);
+            searchBar.setDisable(true);
         }
     }
 
@@ -557,6 +566,16 @@ public class MainStage implements Initializable {
         } else if (sortBy.getSelectedToggle() == yearSort) {
             sorter.sortByYearReverse();
         } else sorter.sortByDurationReverse();
+    }
+
+    @FXML
+    public void toggleLeftPane(ActionEvent actionEvent) {
+        CheckMenuItem menuItem = (CheckMenuItem) actionEvent.getSource();
+        if (menuItem.isSelected()) {
+            borderPane.getChildren().remove(vBoxLeft);
+        } else {
+            borderPane.setLeft(vBoxLeft);
+        }
     }
 
     @FXML
