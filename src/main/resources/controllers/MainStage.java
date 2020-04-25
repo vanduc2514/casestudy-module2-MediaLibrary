@@ -7,6 +7,8 @@ package main.resources.controllers;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -46,6 +48,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class MainStage implements Initializable {
 
@@ -179,7 +182,8 @@ public class MainStage implements Initializable {
         assert alertStage != null;
         if (alertStage.confirm) {
             toDisplay = facadeUtil.createNewList();
-            songTable.getItems().clear();
+            displayList = FXCollections.observableList(toDisplay);
+//            songTable.getItems().clear();
             clearSummary();
             return true;
         }
@@ -250,7 +254,7 @@ public class MainStage implements Initializable {
     }
 
     @FXML
-    public void openFileLocation(ActionEvent actionEvent) throws IOException {
+    public void openFileLocation(ActionEvent actionEvent) {
         if (borderPane.getCenter() == songTable) {
             selectedSong = songTable.getSelectionModel().getSelectedItem();
         } else {
@@ -259,7 +263,11 @@ public class MainStage implements Initializable {
             selectedSong = selectedContent.getSelectionModel().getSelectedItem();
         }
         Desktop desktop = Desktop.getDesktop();
-        desktop.open(facadeUtil.getSongFolder(selectedSong));
+        try {
+            desktop.open(facadeUtil.getSongFolder(selectedSong));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -469,10 +477,6 @@ public class MainStage implements Initializable {
     }
 
     @FXML
-    public void searchSong(KeyEvent keyEvent) {
-    }
-
-    @FXML
     public void sortItem() {
         if (order.getSelectedToggle() == ascendingOrder) {
             ascendingSort();
@@ -581,6 +585,26 @@ public class MainStage implements Initializable {
             }
         });
         songTable.setItems(displayList);
+        FilteredList<SongDao> filteredList = new FilteredList<>(displayList, new Predicate<SongDao>() {
+            @Override
+            public boolean test(SongDao songDao) {
+                return true;
+            }
+        });
+        searchBar.textProperty().addListener(((observable, oldValue, newValue) -> {
+            filteredList.setPredicate(songDao -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseInput = newValue.toLowerCase();
+                if (songDao.getTitle().toLowerCase().contains(lowerCaseInput)) {
+                    return true;
+                } else return songDao.getArtistDao().getTitle().toLowerCase().contains(lowerCaseInput);
+            });
+        }));
+        SortedList<SongDao> sortedList = new SortedList<>(filteredList);
+        sortedList.comparatorProperty().bind(songTable.comparatorProperty());
+        songTable.setItems(sortedList);
     }
 
     private AlertStage getAlertStage(String message, String detail) {
