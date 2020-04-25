@@ -13,10 +13,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -58,6 +60,10 @@ public class MainStage implements Initializable {
     public FXMLLoader fxmlLoader;
     public TabPane tabPane;
     public Tab tab;
+    public ListView<SongDao> songList;
+    public TableView<SongDao> filterTable;
+    public SongDao selectedSong;
+    public ObservableList<SongDao> selectedList;
 
     @FXML
     public BorderPane borderPane;
@@ -220,39 +226,69 @@ public class MainStage implements Initializable {
 
     @FXML
     public void handleContextMenuTableView(ContextMenuEvent contextMenuEvent) {
-        ObservableList<SongDao> selected = songTable.getSelectionModel().getSelectedItems();
-        if (selected.isEmpty()) {
-            songTable.getContextMenu().hide();
+        if (contextMenuEvent.getSource() == songTable) {
+            selectedList = songTable.getSelectionModel().getSelectedItems();
+        } else if (contextMenuEvent.getSource() == filterTable) {
+            System.out.println(contextMenuEvent.getSource());
         }
+//        if (selectedList.isEmpty()) {
+//            songTable.getContextMenu().hide();
+//        }
     }
 
     @FXML
     public void openFileLocation(ActionEvent actionEvent) throws IOException {
-        ObservableList<SongDao> selected = songTable.getSelectionModel().getSelectedItems();
+        if (borderPane.getCenter() == songTable) {
+            selectedSong = songTable.getSelectionModel().getSelectedItem();
+        } else {
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
+            selectedSong = selectedContent.getSelectionModel().getSelectedItem();
+        }
         Desktop desktop = Desktop.getDesktop();
-        desktop.open(facadeUtil.getSongFolder(selected.get(0)));
+        desktop.open(facadeUtil.getSongFolder(selectedSong));
     }
 
     @FXML
     public void deleteSong() {
+        if (borderPane.getCenter() == songTable) {
+            selectedSong = songTable.getSelectionModel().getSelectedItem();
+        } else {
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
+            selectedSong = selectedContent.getSelectionModel().getSelectedItem();
+        }
         AlertStage alertStage = getAlertStage("Bài hát sẽ bị xoá vĩnh viễn", "Bạn có chắc chắn ?");
         assert alertStage != null;
         if (alertStage.confirm) {
-            facadeUtil.deleteSong(songTable.getSelectionModel().getSelectedItem());
+            facadeUtil.deleteSong(selectedSong);
         }
         clearSummary();
     }
 
     @FXML
     public void removeSong() {
-        facadeUtil.removeSong(songTable.getSelectionModel().getSelectedItem());
+        if (borderPane.getCenter() == songTable) {
+            selectedSong = songTable.getSelectionModel().getSelectedItem();
+        } else {
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
+            selectedSong = selectedContent.getSelectionModel().getSelectedItem();
+        }
+        facadeUtil.removeSong(selectedSong);
         songTable.refresh();
         clearSummary();
     }
 
     @FXML
-    public void showSongDetail() {
-        SongDao selectedSong = songTable.getSelectionModel().getSelectedItem();
+    public void showSongDetail(ActionEvent event) {
+        if (borderPane.getCenter() == songTable) {
+            selectedSong = songTable.getSelectionModel().getSelectedItem();
+        } else {
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
+            selectedSong = selectedContent.getSelectionModel().getSelectedItem();
+        }
         fxmlLoader = new FXMLLoader(getClass().getResource("../view/DetailStage.fxml"));
         stage = new Stage();
         try {
@@ -271,22 +307,46 @@ public class MainStage implements Initializable {
         }
     }
 
+    private void setSongDetail(SongDao selectedSong, DetailStage detailStage) {
+        detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
+        detailStage.title.setText(selectedSong.getTitle());
+        detailStage.artist.setText(selectedSong.getArtistDao().getTitle());
+        detailStage.album.setText(selectedSong.getAlbumDao().getTitle());
+        detailStage.composer.setText(selectedSong.getComposer());
+        detailStage.genre.setText(selectedSong.getGenreDao().getTitle());
+        detailStage.year.setText(String.valueOf(selectedSong.getYear()));
+        detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
+        detailStage.bitrate.setText(selectedSong.getBitrate() + " kbps");
+        detailStage.sampleRate.setText(selectedSong.getSampleRate() + " Khz");
+        detailStage.filePath.setText(selectedSong.getPath());
+        Image albumArt = facadeUtil.getAlbumArt(selectedSong);
+        Rectangle2D rectangle2D = new Rectangle2D(0, 0, albumArt.getWidth(), albumArt.getHeight());
+        detailStage.albumArt.setViewport(rectangle2D);
+        detailStage.albumArt.setImage(albumArt);
+    }
+
     @FXML
     public void showSongSummary(MouseEvent mouseEvent) {
-        ObservableList<SongDao> selected = songTable.getSelectionModel().getSelectedItems();
-        SongDao SongDao = selected.get(0);
+        TableRow<SongDao> tableRow = (TableRow<SongDao>) mouseEvent.getSource();
+        if (tableRow.getTableView() == songTable) {
+            selectedSong = songTable.getSelectionModel().getSelectedItem();
+        } else {
+            Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
+            TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
+            selectedSong = selectedContent.getSelectionModel().getSelectedItem();
+        }
         Image image;
-        image = facadeUtil.getAlbumArt(SongDao);
+        image = facadeUtil.getAlbumArt(selectedSong);
         Rectangle2D rectangle2D = new Rectangle2D(0, 0, image.getWidth(), image.getHeight());
         albumArt.setViewport(rectangle2D);
         titleLabel.setVisible(true);
-        titleLabel.setText(SongDao.getTitle());
+        titleLabel.setText(selectedSong.getTitle());
         artistLabel.setVisible(true);
-        artistLabel.setText(SongDao.getArtistDao().getTitle());
+        artistLabel.setText(selectedSong.getArtistDao().getTitle());
         albumLabel.setVisible(true);
-        albumLabel.setText(SongDao.getAlbumDao().getTitle());
+        albumLabel.setText(selectedSong.getAlbumDao().getTitle());
         genreLabel.setVisible(true);
-        genreLabel.setText(SongDao.getGenreDao().getTitle());
+        genreLabel.setText(selectedSong.getGenreDao().getTitle());
         albumArt.setVisible(true);
         albumArt.setImage(image);
     }
@@ -300,7 +360,7 @@ public class MainStage implements Initializable {
     public void showArtistPane(ActionEvent actionEvent) {
         LibraryUtil util = (LibraryUtil) facadeUtil;
         List<SongData> listArtist = util.getArtistDaoList();
-        tabPane = createSongPane(listArtist);
+        tabPane = createSongTablePane(listArtist);
         borderPane.setCenter(tabPane);
     }
 
@@ -308,7 +368,7 @@ public class MainStage implements Initializable {
     public void showAlbumPane(ActionEvent actionEvent) {
         LibraryUtil util = (LibraryUtil) facadeUtil;
         List<SongData> listAlbum = util.getAlbumDaoList();
-        tabPane = createSongPane(listAlbum);
+        tabPane = createSongTablePane(listAlbum);
         borderPane.setCenter(tabPane);
     }
 
@@ -316,36 +376,44 @@ public class MainStage implements Initializable {
     public void showGenrePane(ActionEvent actionEvent) {
         LibraryUtil util = (LibraryUtil) facadeUtil;
         List<SongData> listGenre = util.getGenreDaoList();
-        tabPane = createSongPane(listGenre);
+        tabPane = createSongTablePane(listGenre);
         borderPane.setCenter(tabPane);
     }
 
-    private TabPane createSongPane(List<SongData> list) {
+    private TabPane createSongTablePane(List<SongData> list) {
         tabPane = new TabPane();
-        ListView<SongDao> songList;
         for (SongData data : list) {
+            ObservableList<SongDao> filterList = FXCollections.observableList(data.getSongDaoList());
             tab = new Tab(data.getTitle());
-            songList = new ListView<>();
-            songList.setCellFactory(new Callback<ListView<SongDao>, ListCell<SongDao>>() {
+            filterTable = new TableView<>();
+            TableColumn<SongDao, String> tableColumn = new TableColumn<>("Tựa đề");
+            tableColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+            filterTable.getColumns().add(tableColumn);
+            filterTable.setItems(filterList);
+            filterTable.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
                 @Override
-                public ListCell<SongDao> call(ListView<SongDao> param) {
-                    return new ListCell<SongDao>() {
-                        @Override
-                        protected void updateItem(SongDao item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (empty) {
-                                setText(null);
-                            } else {
-                                setText(item.getTitle());
-                            }
-                        }
-                    };
+                public void handle(ContextMenuEvent event) {
+                    handleContextMenuTableView(event);
                 }
             });
-            songList.getItems().addAll(data.getSongDaoList());
-            tab.setContent(songList);
+            filterTable.setRowFactory(new Callback<TableView<SongDao>, TableRow<SongDao>>() {
+                @Override
+                public TableRow<SongDao> call(TableView<SongDao> param) {
+                    TableRow<SongDao> row = new TableRow<>();
+                    row.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if (event.getClickCount() == 1 && !row.isEmpty()) {
+                                showSongSummary(event);
+                            }
+                        }
+                    });
+                    return row;
+                }
+            });
+            filterTable.setContextMenu(songTable.getContextMenu());
+            tab.setContent(filterTable);
             tabPane.getTabs().add(tab);
-            tabPane.setContextMenu(contextMenu);
         }
         return tabPane;
     }
@@ -461,24 +529,6 @@ public class MainStage implements Initializable {
     public void exit() {
         facadeUtil.saveLibrary("library.dat");
         Platform.exit();
-    }
-
-    private void setSongDetail(SongDao selectedSong, DetailStage detailStage) {
-        detailStage.track.setText(String.valueOf(selectedSong.getTrackNumber()));
-        detailStage.title.setText(selectedSong.getTitle());
-        detailStage.artist.setText(selectedSong.getArtistDao().getTitle());
-        detailStage.album.setText(selectedSong.getAlbumDao().getTitle());
-        detailStage.composer.setText(selectedSong.getComposer());
-        detailStage.genre.setText(selectedSong.getGenreDao().getTitle());
-        detailStage.year.setText(String.valueOf(selectedSong.getYear()));
-        detailStage.duration.setText(selectedSong.getDuration().toMinutes() + ":" + selectedSong.getDuration().minusMinutes(selectedSong.getDuration().toMinutes()).getSeconds());
-        detailStage.bitrate.setText(selectedSong.getBitrate() + " kbps");
-        detailStage.sampleRate.setText(selectedSong.getSampleRate() + " Khz");
-        detailStage.filePath.setText(selectedSong.getPath());
-        Image albumArt = facadeUtil.getAlbumArt(selectedSong);
-        Rectangle2D rectangle2D = new Rectangle2D(0, 0, albumArt.getWidth(), albumArt.getHeight());
-        detailStage.albumArt.setViewport(rectangle2D);
-        detailStage.albumArt.setImage(albumArt);
     }
 
     private void configTable() {
