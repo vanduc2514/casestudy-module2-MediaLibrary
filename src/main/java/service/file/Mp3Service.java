@@ -41,16 +41,16 @@ public abstract class Mp3Service implements FileService {
     @Override
     public final SongDaoManager readList(File file) {
         InputStream inputStream;
-        SongDaoManager manager;
+        SongDaoManager songManager;
         try {
             inputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            manager = (SongDaoManager) objectInputStream.readObject();
+            songManager = (SongDaoManager) objectInputStream.readObject();
             inputStream.close();
         } catch (IOException | ClassNotFoundException e) {
-            manager = new SongDaoManagerImp();
+            songManager = new SongDaoManagerImp();
         }
-        return manager;
+        return songManager;
     }
 
     public abstract void setMedata(File file, HashMap<String, String> propertyMap);

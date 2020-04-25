@@ -5,17 +5,17 @@ package main.resources.controllers;
  */
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,7 +26,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
@@ -48,11 +47,12 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.*;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class MainStage implements Initializable {
 
     private ObservableList<SongDao> displayList;
+    public ObservableList<SongDao> selectedList;
+    public ObservableList<SongDao> filteredList;
     private List<SongDao> toDisplay;
     private FacadeUtil facadeUtil;
     private Sorter sorter;
@@ -63,10 +63,8 @@ public class MainStage implements Initializable {
     public FXMLLoader fxmlLoader;
     public TabPane tabPane;
     public Tab tab;
-    public ListView<SongDao> songList;
     public TableView<SongDao> filterTable;
     public SongDao selectedSong;
-    public ObservableList<SongDao> selectedList;
 
     @FXML
     public Button songButton;
@@ -145,10 +143,50 @@ public class MainStage implements Initializable {
         } catch (NullPointerException ex) {
             toDisplay = facadeUtil.createNewList();
         } finally {
-            displayList = FXCollections.observableList(toDisplay);
+            filteredList = FXCollections.observableArrayList();
+            displayList = FXCollections.observableArrayList(toDisplay);
+            filteredList.addAll(displayList);
+            displayList.addListener(new ListChangeListener<SongDao>() {
+                @Override
+                public void onChanged(Change<? extends SongDao> c) {
+                    while (c.next()) {
+                        if (c.wasAdded()) {
+                            updateFilteredList();
+                        } else if (c.wasRemoved()) {
+                            facadeUtil.removeSong(c.getRemoved().get(0));
+                            updateFilteredList();
+                        }
+                    }
+                }
+            });
+            searchBar.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    updateFilteredList();
+                }
+            });
             configTableView();
             sorter = new SorterUseComparator(displayList);
         }
+    }
+
+    private void updateFilteredList() {
+        filteredList.clear();
+        for (SongDao songDao : displayList) {
+            if (isMatch(songDao)) {
+                filteredList.add(songDao);
+            }
+        }
+        songTable.setItems(filteredList);
+    }
+
+    private boolean isMatch(SongDao songDao) {
+        String input = searchBar.getText().toLowerCase();
+        if (input.isEmpty()) {
+            return true;
+        } else if (songDao.getArtistDao().getTitle().toLowerCase().contains(input)) {
+            return true;
+        } else return songDao.getTitle().toLowerCase().contains(input);
     }
 
     @FXML
@@ -200,13 +238,13 @@ public class MainStage implements Initializable {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        displayList = FXCollections.observableList(toDisplay);
+        displayList.setAll(toDisplay);
         if (order.getSelectedToggle() == ascendingOrder) {
             ascendingSort();
         } else if (order.getSelectedToggle() == descendingOrder) {
             descendingSort();
         }
-        songTable.setItems(displayList);
+        songTable.setItems(filteredList);
     }
 
     @FXML
@@ -282,6 +320,7 @@ public class MainStage implements Initializable {
         assert alertStage != null;
         if (alertStage.confirm) {
             facadeUtil.deleteSong(selectedSong);
+            displayList.remove(selectedSong);
         }
         clearSummary();
     }
@@ -295,8 +334,7 @@ public class MainStage implements Initializable {
             TableView<SongDao> selectedContent = (TableView<SongDao>) selectedTab.getContent();
             selectedSong = selectedContent.getSelectionModel().getSelectedItem();
         }
-        facadeUtil.removeSong(selectedSong);
-        songTable.refresh();
+        displayList.remove(selectedSong);
         clearSummary();
     }
 
@@ -583,27 +621,7 @@ public class MainStage implements Initializable {
                 };
             }
         });
-        FilteredList<SongDao> filteredList = new FilteredList<>(displayList, new Predicate<SongDao>() {
-            @Override
-            public boolean test(SongDao songDao) {
-                return true;
-            }
-        });
-        searchBar.textProperty().addListener(((observable, oldValue, newValue) -> {
-            filteredList.setPredicate(songDao -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseInput = newValue.toLowerCase();
-                if (songDao.getTitle().toLowerCase().contains(lowerCaseInput)) {
-                    return true;
-                } else return songDao.getArtistDao().getTitle().toLowerCase().contains(lowerCaseInput);
-            });
-        }));
-        SortedList<SongDao> sortedList = new SortedList<>(filteredList);
-        sortedList.comparatorProperty().bind(songTable.comparatorProperty());
-        songTable.setItems(sortedList);
-        songTable.setItems(displayList);
+        songTable.setItems(filteredList);
     }
 
     private AlertStage getAlertStage(String message, String detail) {

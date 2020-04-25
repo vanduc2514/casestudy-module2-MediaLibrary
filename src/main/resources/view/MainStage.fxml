@@ -67,11 +67,11 @@
                     <RadioMenuItem fx:id="yearSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Năm" toggleGroup="$sortBy" />
                     <RadioMenuItem fx:id="durationSort" mnemonicParsing="false" onAction="#sortItem" text="Sắp xếp theo Thời lượng" toggleGroup="$sortBy" />
                     <SeparatorMenuItem mnemonicParsing="false" />
-                    <RadioMenuItem fx:id="ascendingOrder" mnemonicParsing="false" onAction="#sortItem" text="Tăng dần">
+                    <RadioMenuItem fx:id="ascendingOrder" mnemonicParsing="false" onAction="#sortItem" selected="true" text="Tăng dần">
                   <toggleGroup>
                             <ToggleGroup fx:id="order" />
                   </toggleGroup></RadioMenuItem>
-                    <RadioMenuItem fx:id="descendingOrder" mnemonicParsing="false" onAction="#sortItem" selected="true" text="Giảm dần" toggleGroup="$order" />
+                    <RadioMenuItem fx:id="descendingOrder" mnemonicParsing="false" onAction="#sortItem" text="Giảm dần" toggleGroup="$order" />
                 </Menu>
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#showSongDetail" text="Xem chi tiết bài hát" />
@@ -150,7 +150,7 @@
                     <Font name="System Bold" size="18.0" />
                 </font>
             </Label>
-         <TextField fx:id="searchBar" styleClass="search-bar" layoutX="1071.0" layoutY="24.0" maxWidth="200.0" prefWidth="200.0" AnchorPane.rightAnchor="15.0" />
+         <TextField fx:id="searchBar" layoutX="1071.0" layoutY="24.0" maxWidth="200.0" prefWidth="200.0" styleClass="search-bar" AnchorPane.rightAnchor="15.0" />
 
          <Label layoutX="968.0" layoutY="28.0" text="Tìm kiếm">
             <font>
