@@ -157,9 +157,11 @@ public class MainStage implements Initializable {
                     while (c.next()) {
                         if (c.wasAdded()) {
                             updateFilteredList();
+                            checkDisplayList();
                         } else if (c.wasRemoved()) {
                             facadeUtil.removeSong(c.getRemoved().get(0));
                             updateFilteredList();
+                            checkDisplayList();
                         }
                     }
                 }
@@ -172,6 +174,23 @@ public class MainStage implements Initializable {
             });
             configTableView();
             sorter = new SorterUseComparator(displayList);
+            checkDisplayList();
+        }
+    }
+
+    private void checkDisplayList() {
+        if (displayList.isEmpty()) {
+            songButton.setDisable(true);
+            artistButton.setDisable(true);
+            albumButton.setDisable(true);
+            genreButton.setDisable(true);
+            searchBar.setDisable(true);
+        } else {
+            songButton.setDisable(false);
+            artistButton.setDisable(false);
+            albumButton.setDisable(false);
+            genreButton.setDisable(false);
+            searchBar.setDisable(false);
         }
     }
 
@@ -225,8 +244,10 @@ public class MainStage implements Initializable {
         assert alertStage != null;
         if (alertStage.confirm) {
             toDisplay = facadeUtil.createNewList();
-            songTable.refresh();
+            displayList.clear();
             clearSummary();
+            albumArt.setImage(new Image(new File("src/main/resources/images/default-album-cover.png").toURI().toString()));
+            albumArt.setVisible(true);
             return true;
         }
         return false;

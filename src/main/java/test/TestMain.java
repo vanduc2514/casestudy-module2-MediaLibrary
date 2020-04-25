@@ -3,12 +3,18 @@ package main.java.test;/*
  * @author Duc on 4/25/2020
  */
 
-import java.util.ArrayList;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
+import java.io.File;
 
 public class TestMain {
 
     public static void main(String[] args) {
-        ArrayList<String> list = new ArrayList<String>();
-        list.remove("a");
+        File file = new File("F:\\Users\\Duc\\Downloads\\Khoi Dau - Hoang Thuy Linh.mp3");
+        Media media = new Media(file.toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
     }
 }

@@ -83,6 +83,9 @@
     </top>
     <center>
         <TableView fx:id="songTable" blendMode="MULTIPLY" cache="true" onContextMenuRequested="#handleContextMenuTableView" stylesheets="@../css/style.css" BorderPane.alignment="CENTER">
+            <placeholder>
+                <Label text="Thư viện trống"/>
+            </placeholder>
             <columns>
                 <TableColumn fx:id="trackColumn" maxWidth="2500.0" prefWidth="66.0" styleClass="table-track" text="Track" />
                 <TableColumn fx:id="titleColumn" editable="false" maxWidth="3000.0" minWidth="270.0" prefWidth="350.0" styleClass="table-title" text="Tựa đề" />
