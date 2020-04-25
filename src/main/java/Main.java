@@ -8,9 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import main.resources.controllers.MainStage;
@@ -25,6 +23,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setTitle("Media Library 1.0");
+        primaryStage.getIcons().add(new Image(new File("src/main/resources/images/application-icon.png").toURI().toString()));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../resources/view/MainStage.fxml"));
         Parent root;
         try {
