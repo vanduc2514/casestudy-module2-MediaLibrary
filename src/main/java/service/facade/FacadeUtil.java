@@ -1,10 +1,10 @@
-package main.java.service.facade;/*
+package service.facade;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/23/2020
  */
 
 import javafx.scene.image.Image;
-import main.java.model.SongDao;
+import model.SongDao;
 
 import java.io.File;
 import java.util.AbstractMap;
@@ -33,4 +33,6 @@ public interface FacadeUtil {
     File getSongFolder(SongDao song);
 
     Image getAlbumArt(SongDao song);
+
+    void exportToText(File file);
 }

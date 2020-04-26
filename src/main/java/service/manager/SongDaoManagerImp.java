@@ -1,9 +1,9 @@
-package main.java.service.manager;/*
+package service.manager;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/24/2020
  */
 
-import main.java.model.SongDao;
+import model.SongDao;
 import java.util.ArrayList;
 import java.util.List;
 

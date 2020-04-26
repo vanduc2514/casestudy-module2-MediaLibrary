@@ -1,15 +1,15 @@
-package main.java.service.facade;/*
+package service.facade;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/23/2020
  */
 
 import javafx.scene.image.Image;
-import main.java.model.*;
-import main.java.service.manager.SongDaoManager;
-import main.java.service.manager.SongDaoManagerImp;
-import main.java.service.file.FileService;
-import main.java.service.file.FileUtil;
-import main.java.service.file.Mp3MagicService;
+import model.*;
+import service.manager.SongDaoManager;
+import service.manager.SongDaoManagerImp;
+import service.file.FileService;
+import service.file.FileUtil;
+import service.file.Mp3MagicService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -110,6 +110,11 @@ public class LibraryUtil implements FacadeUtil {
         for (File file : files) {
             fileService.importSong(file, songManager);
         }
+    }
+
+    @Override
+    public void exportToText(File file) {
+        fileService.exportList(file, songManager);
     }
 
     @Override

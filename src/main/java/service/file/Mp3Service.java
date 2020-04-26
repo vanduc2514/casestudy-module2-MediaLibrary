@@ -1,11 +1,11 @@
-package main.java.service.file;/*
+package service.file;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/19/2020
  */
 
-import main.java.model.SongDao;
-import main.java.service.manager.SongDaoManager;
-import main.java.service.manager.SongDaoManagerImp;
+import model.SongDao;
+import service.manager.SongDaoManager;
+import service.manager.SongDaoManagerImp;
 import java.io.*;
 import java.util.HashMap;
 
@@ -16,6 +16,21 @@ public abstract class Mp3Service implements FileService {
         SongDao song = parseSong(file);
         if (!songManager.getSongDaoList().contains(song)) {
             songManager.addSongDao(song);
+        }
+    }
+
+    @Override
+    public void exportList(File file, SongDaoManager songManager) {
+        try {
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            for (SongDao songDao : songManager.getSongDaoList()) {
+                bufferedWriter.write(songDao.toString());
+                bufferedWriter.write("\n\n");
+            }
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

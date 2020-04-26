@@ -1,4 +1,4 @@
-package main.java.service.file;/*
+package service.file;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/23/2020
  */

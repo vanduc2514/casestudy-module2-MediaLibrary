@@ -1,4 +1,4 @@
-package main.java;/*
+/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/18/2020
  */
@@ -11,8 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import main.resources.controllers.MainStage;
-
+import controllers.MainStage;
 import java.io.File;
 import java.io.IOException;
 
@@ -25,7 +24,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Media Library 1.0");
         primaryStage.getIcons().add(new Image(new File("src/main/resources/images/application-icon.png").toURI().toString()));
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../resources/view/MainStage.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainStage.fxml"));
         Parent root;
         try {
             root = loader.load();

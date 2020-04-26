@@ -1,4 +1,4 @@
-package main.java.model;/*
+package model;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/24/2020
  */
@@ -157,20 +157,15 @@ public class SongDao implements Serializable, Comparable<SongDao> {
 
     @Override
     public String toString() {
-        return "SongDao{" +
-                "trackNumber='" + trackNumber + '\'' +
-                ", title='" + title + '\'' +
-                ", artistDao=" + artistDao.getTitle() +
-                ", albumDao=" + albumDao.getTitle() +
-                ", genreDao=" + genreDao.getTitle() +
-                ", composer='" + composer + '\'' +
-                ", year=" + year +
-                ", duration=" + duration +
-                ", bitrate=" + bitrate +
-                ", sampleRate=" + sampleRate +
-                ", albumArt=" + Arrays.toString(albumArt) +
-                ", path='" + path + '\'' +
-                ", importTime=" + importTime +
-                '}';
+        return "Track: " + trackNumber + '\n' +
+                "Title: " + title + '\n' +
+                "Artist: " + artistDao.getTitle() + '\n' +
+                "Album: " + albumDao.getTitle() + '\n' +
+                "Genre: " + genreDao.getTitle() + '\n' +
+                "Composer: " + composer + '\n' +
+                "Year: " + year + '\n' +
+                "Duration: " + duration.toMinutes() + ":" + duration.minusMinutes(duration.toMinutes()).getSeconds() + '\n' +
+                "Bitrate: " + bitrate + " kbps" + '\n' +
+                "Sample rate: " + sampleRate + " khz";
     }
 }

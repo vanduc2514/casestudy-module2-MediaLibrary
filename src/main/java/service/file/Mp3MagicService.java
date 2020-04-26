@@ -1,10 +1,10 @@
-package main.java.service.file;/*
+package service.file;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/25/2020
  */
 
 import com.mpatric.mp3agic.*;
-import main.java.model.*;
+import model.*;
 
 import java.io.*;
 import java.net.URLConnection;

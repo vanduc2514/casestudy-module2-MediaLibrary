@@ -1,9 +1,9 @@
-package main.java.service.file;/*
+package service.file;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/21/2020
  */
 
-import main.java.service.manager.SongDaoManager;
+import service.manager.SongDaoManager;
 
 import java.io.File;
 import java.util.HashMap;
@@ -18,4 +18,5 @@ public interface FileService {
 
     void setMedata(File file, HashMap<String, String> propertyMap);
 
+    void exportList(File file, SongDaoManager songManager);
 }

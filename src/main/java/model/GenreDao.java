@@ -1,4 +1,4 @@
-package main.java.model;/*
+package model;/*
  * @project caseStudy-module2-MediaLibrary
  * @author Duc on 4/24/2020
  */
